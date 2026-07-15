@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -83,17 +83,17 @@
             <a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
             <ul class="nav-links">
                 <li><a href="../index.html">首页</a></li>
-                <li><a href="kt583同步撰写.html">专利撰写</a></li>
-                <li><a href="kt21加数字标号.html">自动标号</a></li>
-                <li><a href="kt2-pdf附图标记提取.html">附图提取</a></li>
-                <li><a href="kt3-claims-checker.html">引用检查</a></li>
-                <li><a href="kt4-figure-checker.html" class="active">标记一致性</a></li>
+                <li><a href="kt1-同步撰写-patent-writer.html">专利撰写</a></li>
+                <li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
+                <li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
+                <li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
+                <li><a href="kt5-标记一致性-figure-checker.html" class="active">标记一致性</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="page-header">
-        <h2>🔬 附图标记一致性检查器 KT4</h2>
+        <h2>🔬 附图标记一致性检查器 KT5</h2>
         <p>说明书 vs 权利要求书 vs 附图 — 三方标记交叉比对，遗漏/多余一目了然</p>
     </div>
 
@@ -110,8 +110,8 @@
         </div>
         <div class="panel">
             <h3>🖼️ 附图标记列表</h3>
-            <textarea id="figInput" placeholder="输入附图中出现的所有标记数字，用逗号、顿号、分号或换行分隔&#10;&#10;例如：&#10;1, 2, 3, 4, 5, 6, 11, 12, 21, 22, 31, 32&#10;&#10;也可以从 KT2 附图提取工具的结果直接粘贴过来"></textarea>
-            <p class="hint">可以从 CAD PDF 附图提取工具（KT2）的结果直接粘贴。支持逗号、分号、空格、换行分隔。</p>
+            <textarea id="figInput" placeholder="输入附图中出现的所有标记数字，用逗号、顿号、分号或换行分隔&#10;&#10;例如：&#10;1, 2, 3, 4, 5, 6, 11, 12, 21, 22, 31, 32&#10;&#10;也可以从 KT3 附图提取工具的结果直接粘贴过来"></textarea>
+            <p class="hint">可以从 CAD PDF 附图提取工具（KT3）的结果直接粘贴。支持逗号、分号、空格、换行分隔。</p>
         </div>
     </div>
 
@@ -155,7 +155,7 @@
             const parts = cleaned.split(/\s+/);
             const nums = new Set();
             for (let p of parts) {
-                // Remove trailing ； and 、 that KT2 adds
+                // Remove trailing ； and 、 that KT3 adds
                 const cleaned2 = p.replace(/[；;、，,]$/, '').trim();
                 const n = parseInt(cleaned2);
                 if (!isNaN(n) && n > 0 && n <= 9999) nums.add(n);
@@ -213,9 +213,9 @@
             }
             html += `</div>`;
 
-            // 建议：从 KT2 粘贴
+            // 建议：从 KT3 粘贴
             if (!hasFigData && descNums.size > 0) {
-                html += `<div class="venn-hint">💡 <strong>提示</strong>：如需要与附图做三方比对，请先使用 <a href="kt2-pdf附图标记提取.html" style="color:var(--primary);">KT2 附图标记提取工具</a> 提取 CAD PDF 中的标记数字，再粘贴到右侧「附图标记列表」。目前仅做说明书与权利要求书之间的比对。</div>`;
+                html += `<div class="venn-hint">💡 <strong>提示</strong>：如需要与附图做三方比对，请先使用 <a href="kt3-附图提取-figure-extract.html" style="color:var(--primary);">KT3 附图标记提取工具</a> 提取 CAD PDF 中的标记数字，再粘贴到右侧「附图标记列表」。目前仅做说明书与权利要求书之间的比对。</div>`;
             }
             html += `</div>`;
 
