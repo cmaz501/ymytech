@@ -22,11 +22,26 @@
         .nav-links a:hover,.nav-links a.active { color:var(--primary); }
         .nav-links a.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
 
-        .page-header { max-width:1200px; margin:0 auto; padding:24px 40px 0; text-align:center; }
+        .page-header { max-width:1400px; margin:0 auto; padding:24px 40px 0; text-align:center; }
         .page-header h2 { font-size:24px; font-weight:700; }
         .page-header p { color:var(--text-secondary); font-size:14px; margin-top:6px; }
 
-        .container { max-width:1200px; margin:20px auto; padding:0 40px; }
+        /* 主布局：侧边栏 + 内容 */
+        .main-layout { max-width:1400px; margin:20px auto; padding:0 40px; display:flex; gap:24px; align-items:flex-start; }
+        .sidebar { width:260px; flex-shrink:0; position:sticky; top:84px; max-height:calc(100vh - 100px); overflow-y:auto; background:#fff; border-radius:12px; border:1px solid var(--border); padding:16px; }
+        .sidebar::-webkit-scrollbar { width:4px; }
+        .sidebar::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:2px; }
+        .sidebar .toc-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:6px; }
+        .toc-cat { margin-bottom:4px; }
+        .toc-cat-header { display:flex; align-items:center; gap:4px; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; color:var(--text); transition:background 0.15s; user-select:none; }
+        .toc-cat-header:hover { background:#f3f4f6; }
+        .toc-cat-header .arrow { font-size:10px; transition:transform 0.2s; width:14px; text-align:center; }
+        .toc-cat-header .arrow.open { transform:rotate(90deg); }
+        .toc-items { overflow:hidden; transition:max-height 0.3s ease; }
+        .toc-item { display:block; padding:4px 8px 4px 28px; font-size:12px; color:var(--text-secondary); text-decoration:none; border-radius:4px; transition:all 0.15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .toc-item:hover { background:#f3f4f6; color:var(--primary); }
+        .toc-item.active { background:rgba(124,58,237,0.08); color:var(--primary); font-weight:600; }
+        .content-area { flex:1; min-width:0; }
         .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; background:#fff; padding:8px; border-radius:12px; border:1px solid var(--border); }
         .tab { padding:8px 18px; border-radius:8px; border:none; background:none; cursor:pointer; font-size:13px; font-weight:500; color:var(--text-secondary); transition:all 0.2s; white-space:nowrap; }
         .tab:hover { background:#f3f4f6; }
@@ -58,7 +73,8 @@
         .footer-divider { border:none; border-top:1px solid #374151; margin:20px 0; }
         .footer-copy { font-size:13px; color:#6b7280; }
 
-        @media(max-width:768px){ .navbar{padding:0 16px} .nav-links{gap:16px} .nav-links a{font-size:12px} .container{padding:0 16px} .tabs{gap:4px} .tab{padding:6px 12px;font-size:12px} }
+        @media(max-width:768px){ .navbar{padding:0 16px} .nav-links{gap:16px} .nav-links a{font-size:12px} .main-layout{flex-direction:column;padding:0 16px} .sidebar{width:100%;position:static;max-height:none;margin-bottom:16px} .tabs{gap:4px} .tab{padding:6px 12px;font-size:12px} }
+        @media(max-width:900px){ .sidebar{width:220px} }
     </style>
 </head>
 <body>
@@ -82,13 +98,22 @@
         <p>收集常用 AI 提示词，涵盖撰写、审查答复、技术挖掘等场景，点击即可复制</p>
     </div>
 
-    <div class="container">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="🔍 搜索提示词..." oninput="filterPrompts()">
+    <div class="main-layout">
+        <!-- 左侧目录导航 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="toc-title">📑 目录导航</div>
+            <div id="tocTree"></div>
+        </aside>
+
+        <!-- 右侧内容 -->
+        <div class="content-area">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 搜索提示词..." oninput="filterPrompts()">
+            </div>
+            <div class="tabs" id="tabBar"></div>
+            <div class="count-bar" id="countBar"></div>
+            <div id="promptList"></div>
         </div>
-        <div class="tabs" id="tabBar"></div>
-        <div class="count-bar" id="countBar"></div>
-        <div id="promptList"></div>
     </div>
 
     <footer class="footer">
@@ -330,7 +355,78 @@ ABCDEFG`},
         ];
 
         let activeCat = '全部';
+        let tocCollapsed = {};
         const catOrder = ['全部','专利撰写','专利撰写方法论','权利要求','说明书撰写','审查答复','AI风格设定','法律学习排版','其他'];
+
+        // ===== 左侧目录树 =====
+        function renderTOC(){
+            const tree = document.getElementById('tocTree');
+            const catIcons = {'专利撰写':'✍️','专利撰写方法论':'🧠','权利要求':'📋','说明书撰写':'📄','审查答复':'📨','AI风格设定':'🤖','法律学习排版':'📚','其他':'🔧'};
+            const cats = {};
+            prompts.forEach((p,i) => { if(!cats[p.cat]) cats[p.cat]=[]; cats[p.cat].push({title:p.title, id:i}); });
+
+            tree.innerHTML = catOrder.filter(c=>c!=='全部'&&cats[c]).map(cat => {
+                const items = cats[cat];
+                const collapsed = tocCollapsed[cat] !== false;
+                return `<div class="toc-cat">
+                    <div class="toc-cat-header" onclick="toggleTOC('${cat}')">
+                        <span class="arrow${collapsed?' open':''}">▶</span>
+                        <span>${catIcons[cat]||''} ${cat}</span>
+                        <span style="color:var(--text-secondary);font-size:11px;margin-left:auto;">${items.length}</span>
+                    </div>
+                    <div class="toc-items" style="max-height:${collapsed?items.length*28:0}px">
+                        ${items.map(p => `<a class="toc-item" data-toc="${p.id}" onclick="scrollToPrompt(${p.id})" title="${p.title}">${p.title}</a>`).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleTOC(cat){
+            tocCollapsed[cat] = !(tocCollapsed[cat] !== false);
+            renderTOC();
+        }
+
+        function scrollToPrompt(id){
+            const el = document.getElementById('prompt-'+id);
+            if(!el){
+                // Card not visible, switch to its category first
+                const p = prompts[id];
+                if(p && activeCat !== '全部' && activeCat !== p.cat){
+                    activeCat = p.cat;
+                    document.getElementById('searchInput').value = '';
+                    renderTabs();
+                    filterPrompts();
+                }
+                // After re-render, try again
+                setTimeout(()=>{ const e2 = document.getElementById('prompt-'+id); if(e2) e2.scrollIntoView({behavior:'smooth',block:'start'}); },100);
+                return;
+            }
+            el.scrollIntoView({behavior:'smooth',block:'start'});
+            updateActiveTOC(id);
+        }
+
+        function updateActiveTOC(id){
+            document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+            const target = document.querySelector(`.toc-item[data-toc="${id}"]`);
+            if(target) target.classList.add('active');
+        }
+
+        // Scroll spy
+        let scrollTimer;
+        window.addEventListener('scroll', ()=>{
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(()=>{
+                let bestId = null, bestTop = Infinity;
+                document.querySelectorAll('.prompt-card').forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    if(rect.top >= 80 && rect.top < bestTop){
+                        bestTop = rect.top;
+                        bestId = parseInt(card.dataset.pid);
+                    }
+                });
+                if(bestId !== null) updateActiveTOC(bestId);
+            }, 150);
+        }, {passive:true});
 
         function renderTabs(){
             const tabBar = document.getElementById('tabBar');
@@ -351,8 +447,10 @@ ABCDEFG`},
             document.getElementById('countBar').textContent = `共 ${filtered.length} 条提示词`;
             document.getElementById('promptList').innerHTML = filtered.length===0
                 ? '<div class="empty">😕 没有匹配的提示词，试试其他关键词</div>'
-                : filtered.map((p,i) => `
-                <div class="prompt-card" id="card${i}">
+                : filtered.map((p,i) => {
+                    const gid = prompts.indexOf(p);
+                    return `
+                <div class="prompt-card" id="prompt-${gid}" data-pid="${gid}">
                     <h3>${p.title}</h3>
                     <p class="desc">${p.desc}</p>
                     <div class="tag-row">${p.tags.map(t=>`<span class="tag-item">${t}</span>`).join('')}</div>
@@ -361,7 +459,11 @@ ABCDEFG`},
                         <button class="btn-copy" id="btn${i}" onclick="copyPrompt(${i})">📋 复制</button>
                         <button class="btn-expand" onclick="toggleExpand(${i})">展开/折叠</button>
                     </div>
-                </div>`).join('');
+                </div>`}).join('');
+
+            // Rebuild TOC (always shows all prompts)
+            renderTOC();
+        }
         }
 
         function copyPrompt(i){
