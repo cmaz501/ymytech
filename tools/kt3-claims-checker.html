@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>权利要求引用检查器 - 开迈科技 kamaytech</title>
+    <style>
+        :root {
+            --primary: #7c3aed; --primary-light: #8b5cf6;
+            --accent: #10b981; --bg: #f8f9fa; --text: #1f2937;
+            --text-secondary: #6b7280; --border: #e5e7eb;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+
+        .navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 40px; }
+        .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+        .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
+        .nav-logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700; }
+        .nav-logo-text { font-size:20px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+        .nav-links a { text-decoration:none; color:var(--text-secondary); font-size:15px; font-weight:500; transition:color 0.2s; position:relative; }
+        .nav-links a:hover,.nav-links a.active { color:var(--primary); }
+        .nav-links a.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
+
+        .page-header { max-width:1200px; margin:0 auto; padding:24px 40px 0; text-align:center; }
+        .page-header h2 { font-size:24px; font-weight:700; color:var(--text); }
+        .page-header p { color:var(--text-secondary); font-size:14px; margin-top:6px; }
+
+        .container { max-width:1200px; margin:20px auto; padding:0 40px; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+        @media(max-width:768px){ .container { grid-template-columns:1fr; padding:0 16px; } .navbar { padding:0 16px; } .nav-links { gap:16px; } .nav-links a { font-size:13px; } }
+
+        .panel { background:#fff; border-radius:12px; padding:24px; border:1px solid var(--border); }
+        .panel h3 { font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+        textarea { width:100%; min-height:300px; padding:12px; border:1px solid var(--border); border-radius:8px; font-size:14px; line-height:1.6; resize:vertical; font-family:inherit; outline:none; transition:border-color 0.2s; }
+        textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+        .btn-row { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+        .btn { padding:10px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; }
+        .btn-primary { background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; }
+        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(124,58,237,0.3); }
+        .btn-outline { background:#fff; color:var(--primary); border:2px solid var(--primary); }
+        .btn-outline:hover { background:rgba(124,58,237,0.05); }
+        .btn-sm { padding:6px 14px; font-size:12px; }
+
+        #results { min-height:300px; }
+        .result-item { padding:12px 16px; margin-bottom:8px; border-radius:8px; font-size:14px; line-height:1.5; }
+        .result-error { background:#fef2f2; border-left:4px solid #ef4444; color:#991b1b; }
+        .result-warn { background:#fffbeb; border-left:4px solid #f59e0b; color:#92400e; }
+        .result-ok { background:#f0fdf4; border-left:4px solid #22c55e; color:#166534; }
+        .result-info { background:#eff6ff; border-left:4px solid #3b82f6; color:#1e40af; }
+        .no-issues { text-align:center; padding:40px; color:var(--accent); font-size:18px; }
+
+        .footer { background:#1f2937; color:#d1d5db; padding:36px 40px 28px; text-align:center; margin-top:48px; }
+        .footer-inner { max-width:1200px; margin:0 auto; }
+        .footer-brand { font-size:18px; font-weight:700; color:#fff; margin-bottom:6px; }
+        .footer-slogan { color:#9ca3af; font-size:13px; margin-bottom:20px; }
+        .footer-divider { border:none; border-top:1px solid #374151; margin:20px 0; }
+        .footer-copy { font-size:13px; color:#6b7280; }
+
+        .stats-bar { display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+        .stat { padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; }
+        .stat-ok { background:#dcfce7; color:#166534; }
+        .stat-warn { background:#fef9c3; color:#854d0e; }
+        .stat-err { background:#fee2e2; color:#991b1b; }
+
+        .tree-container { margin-top:16px; padding:16px; background:#fafafa; border-radius:8px; font-family:"Consolas","Courier New",monospace; font-size:13px; white-space:pre; overflow-x:auto; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt583同步撰写.html">专利撰写</a></li>
+                <li><a href="kt21加数字标号.html">自动标号</a></li>
+                <li><a href="kt2-pdf附图标记提取.html">附图提取</a></li>
+                <li><a href="kt3-claims-checker.html" class="active">引用检查</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h2>🔍 权利要求引用检查器 KT3</h2>
+        <p>自动解析权利要求间的引用关系，检测引用错误、循环依赖、缺失引用等问题</p>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h3>📝 输入权利要求</h3>
+            <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">
+                每项权利要求一行，格式如：<code>1. 一种装置，其特征在于…</code> 或 <code>权利要求1：一种装置…</code>
+            </p>
+            <textarea id="claimsInput" placeholder="1. 一种数据采集装置，其特征在于，包括：壳体（1）、传感器（2）和处理器（3）。&#10;2. 根据权利要求1所述的数据采集装置，其特征在于，所述壳体（1）为金属材质。&#10;3. 根据权利要求1或2所述的数据采集装置，其特征在于，还包括显示器（4）。&#10;4. 根据权利要求3所述的数据采集装置，其特征在于，所述显示器（4）为触摸屏。&#10;5. 根据权利要求2所述的装置，其特征在于，所述壳体还包括散热孔。&#10;6. 根据权利要求5所述的装置，其特征在于，所述散热孔为圆形。"></textarea>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="checkClaims()">🔍 开始检查</button>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('claimsInput').value=''">清空</button>
+                <button class="btn btn-outline btn-sm" onclick="loadExample()">📋 加载示例</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>📊 检查结果</h3>
+            <div class="stats-bar" id="statsBar"></div>
+            <div id="results"><p style="color:var(--text-secondary);text-align:center;padding:60px 0;">点击「开始检查」查看引用关系分析</p></div>
+            <div id="treeView"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">开迈科技 kamaytech</div>
+            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+        </div>
+    </footer>
+
+    <script>
+        function checkClaims() {
+            const raw = document.getElementById('claimsInput').value.trim();
+            const results = document.getElementById('results');
+            const statsBar = document.getElementById('statsBar');
+            const treeView = document.getElementById('treeView');
+            if (!raw) { results.innerHTML = '<p class="no-issues">⚠️ 请输入权利要求内容</p>'; statsBar.innerHTML = ''; treeView.innerHTML = ''; return; }
+
+            const claims = parseClaims(raw);
+            const issues = analyzeReferences(claims);
+
+            // 统计
+            const errCount = issues.filter(i => i.type === 'error').length;
+            const warnCount = issues.filter(i => i.type === 'warn').length;
+            let statsHTML = `<span class="stat stat-ok">共 ${claims.length} 项权利要求</span>`;
+            if (errCount > 0) statsHTML += `<span class="stat stat-err">${errCount} 处错误</span>`;
+            if (warnCount > 0) statsHTML += `<span class="stat stat-warn">${warnCount} 处警告</span>`;
+            if (errCount === 0 && warnCount === 0) statsHTML += `<span class="stat stat-ok">✅ 全部正常</span>`;
+            statsBar.innerHTML = statsHTML;
+
+            // 结果
+            if (issues.length === 0) {
+                results.innerHTML = '<div class="no-issues">✅ 未发现引用问题，所有权利要求引用关系正确！</div>';
+            } else {
+                results.innerHTML = issues.map(i => {
+                    let cls = i.type === 'error' ? 'result-error' : 'result-warn';
+                    return `<div class="result-item ${cls}">${i.icon} <strong>${i.title}</strong><br><span style="font-size:13px;">${i.detail}</span></div>`;
+                }).join('');
+            }
+
+            // 引用树
+            treeView.innerHTML = buildRefTree(claims);
+        }
+
+        function parseClaims(text) {
+            const lines = text.split('\n').filter(l => l.trim());
+            const claims = [];
+            const patterns = [
+                /^(\d+)[\.\、\s)]\s*(.+)/,   // "1. xxx" "1、xxx" "1) xxx"
+                /^(?:权利要求|权)\s*(\d+)[：:]\s*(.+)/, // "权利要求1：xxx"
+                /^(\d+)\s+(.+)/              // "1 xxx"
+            ];
+
+            for (let line of lines) {
+                let matched = false;
+                for (let pat of patterns) {
+                    const m = line.trim().match(pat);
+                    if (m) {
+                        const claimNum = parseInt(m[1]);
+                        if (claimNum > 0 && claimNum <= 200) {
+                            claims.push({ number: claimNum, text: m[2], raw: line.trim() });
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return claims;
+        }
+
+        function extractRefs(text) {
+            const refs = [];
+            // 根据权利要求X所述
+            const p1 = /根据权利要求\s*(\d+)/g;
+            // 如权利要求X所述
+            const p2 = /如权利要求\s*(\d+)/g;
+            // 根据权利要X所述
+            const p3 = /根据权利要\s*(\d+)/g;
+            // 根据上述权利要求 or 根据前述权利要求 -> no specific ref
+
+            let m;
+            const refSet = new Set();
+            for (let p of [p1, p2, p3]) {
+                while ((m = p.exec(text)) !== null) {
+                    const num = parseInt(m[1]);
+                    if (num > 0 && num <= 200) refSet.add(num);
+                }
+            }
+
+            // 检查 "或" 连接: "根据权利要求1或2" -> 1,2
+            // 检查 "至/到" 范围: "根据权利要求1至5" -> 1,2,3,4,5
+            const rangeP = /根据权利要求\s*(\d+)\s*[至到]\s*(\d+)/g;
+            while ((m = rangeP.exec(text)) !== null) {
+                const from = parseInt(m[1]), to = parseInt(m[2]);
+                if (from > 0 && to >= from && to <= 200) {
+                    for (let i = from; i <= to; i++) refSet.add(i);
+                }
+            }
+
+            // "或" splitting
+            const orP = /根据权利要求\s*([\d或\s、,]+?)\s*所述/g;
+            while ((m = orP.exec(text)) !== null) {
+                const part = m[1];
+                const nums = part.split(/[或\s、,]+/);
+                for (let n of nums) {
+                    const num = parseInt(n);
+                    if (num > 0 && num <= 200) refSet.add(num);
+                }
+            }
+
+            return [...refSet].sort((a, b) => a - b);
+        }
+
+        function analyzeReferences(claims) {
+            const issues = [];
+            const claimNums = new Set(claims.map(c => c.number));
+            const maxClaim = Math.max(...claimNums);
+
+            // 独立权利要求（第一项或不引用其他权利要求的）
+            const independent = [];
+
+            for (let claim of claims) {
+                const refs = extractRefs(claim.text);
+                claim.refs = refs;
+
+                if (refs.length === 0) {
+                    // 独立权利要求 - 不一定是权1
+                    independent.push(claim.number);
+                }
+
+                // 检查自引用
+                if (refs.includes(claim.number)) {
+                    issues.push({
+                        type: 'error', icon: '❌',
+                        title: `权利要求 ${claim.number} 引用了自身`,
+                        detail: `权利要求 ${claim.number} 中出现了引用自身的表述，这不符合专利法规定。`
+                    });
+                }
+
+                // 检查引用的权利要求是否存在
+                for (let ref of refs) {
+                    if (!claimNums.has(ref)) {
+                        issues.push({
+                            type: 'error', icon: '❌',
+                            title: `权利要求 ${claim.number} 引用了不存在的权利要求 ${ref}`,
+                            detail: `权利要求 ${claim.number} 引用了权利要求 ${ref}，但该权利要求未在文本中找到。`
+                        });
+                    }
+                }
+
+                // 检查引用序号大于当前序号（不能引用后面的）
+                for (let ref of refs) {
+                    if (ref > claim.number && claimNums.has(ref)) {
+                        issues.push({
+                            type: 'error', icon: '❌',
+                            title: `权利要求 ${claim.number} 引用了序号更大的权利要求 ${ref}`,
+                            detail: `权利要求只能引用序号比它小的权利要求。权利要求 ${claim.number} 不能引用权利要求 ${ref}。`
+                        });
+                    }
+                }
+            }
+
+            // 检查循环引用
+            const cycles = detectCycles(claims);
+            for (let cycle of cycles) {
+                issues.push({
+                    type: 'error', icon: '🔄',
+                    title: `检测到循环引用：${cycle.join(' → ')} → ${cycle[0]}`,
+                    detail: `权利要求之间的引用形成了循环，这不符合专利法规定。`
+                });
+            }
+
+            // 检查多引多 (多于一个引用，且被其他多项引用)
+            for (let claim of claims) {
+                if (claim.refs.length > 2) {
+                    issues.push({
+                        type: 'warn', icon: '⚠️',
+                        title: `权利要求 ${claim.number} 引用了 ${claim.refs.length} 项权利要求（${claim.refs.join('、')}）`,
+                        detail: `多项引用可能不符合某些国家/地区的专利法规定（如中国要求多项引用不能作为其他多项引用的基础）。请确认合规性。`
+                    });
+                }
+            }
+
+            // 检查独立权利要求是否足够
+            if (independent.length > 1) {
+                issues.push({
+                    type: 'info', icon: 'ℹ️',
+                    title: `检测到 ${independent.length} 项独立权利要求：${independent.join('、')}`,
+                    detail: `存在多项独立权利要求，请确认它们之间满足单一性要求。`
+                });
+            }
+
+            // 检查是否有权利要求未被任何其他权利要求引用
+            const refedBy = {};
+            for (let c of claims) {
+                for (let r of c.refs) refedBy[r] = (refedBy[r] || 0) + 1;
+            }
+            for (let c of claims) {
+                if (!refedBy[c.number] && c.number !== 1 && c.refs.length > 0) {
+                    issues.push({
+                        type: 'warn', icon: '💡',
+                        title: `权利要求 ${c.number} 未被任何其他权利要求引用`,
+                        detail: `该权利要求是「孤儿权利要求」——没有其他权利要求引用它。请确认是否需要保留，或调整引用关系。`
+                    });
+                }
+            }
+
+            // 添加引用关系摘要
+            const summary = claims.map(c => {
+                const refStr = c.refs.length > 0 ? c.refs.join('、') : '无（独立权利要求）';
+                const type = c.refs.length === 0 ? '独立' : '从属';
+                return `权${c.number} [${type}] → 引用：${refStr}`;
+            }).join('\n');
+
+            return issues;
+        }
+
+        function detectCycles(claims) {
+            const adj = {};
+            for (let c of claims) {
+                adj[c.number] = c.refs.filter(r => claims.some(cc => cc.number === r));
+            }
+
+            const cycles = [];
+            const visited = new Set();
+            const inStack = new Set();
+            const path = [];
+
+            function dfs(node) {
+                if (inStack.has(node)) {
+                    const idx = path.indexOf(node);
+                    if (idx >= 0) cycles.push([...path.slice(idx), node]);
+                    return;
+                }
+                if (visited.has(node)) return;
+                visited.add(node);
+                inStack.add(node);
+                path.push(node);
+                for (let next of (adj[node] || [])) dfs(next);
+                path.pop();
+                inStack.delete(node);
+            }
+
+            for (let c of claims) dfs(c.number);
+            return cycles;
+        }
+
+        function buildRefTree(claims) {
+            const refedBy = {};
+            for (let c of claims) {
+                for (let r of c.refs) {
+                    if (!refedBy[r]) refedBy[r] = [];
+                    refedBy[r].push(c.number);
+                }
+            }
+
+            // Find root claims (not referencing any)
+            const roots = claims.filter(c => c.refs.length === 0).map(c => c.number);
+            const allNums = new Set(claims.map(c => c.number));
+
+            // Also include claims that aren't refed by anyone as roots for display
+            let displayRoots = roots.slice();
+            for (let c of claims) {
+                if (!refedBy[c.number] && c.refs.length > 0) {
+                    // It's an orphan - show it as a root too
+                    displayRoots.push(c.number);
+                }
+            }
+
+            // Remove orphans from displayRoots duplicates
+            displayRoots = [...new Set(displayRoots)];
+
+            function renderTree(num, depth = 0, visited = new Set()) {
+                if (visited.has(num)) return `─ 权${num} (循环引用)\n`;
+                visited.add(num);
+                const indent = '  '.repeat(depth);
+                const claim = claims.find(c => c.number === num);
+                const refStr = claim && claim.refs.length > 0 ? ` → 引用权${claim.refs.join('、权')}` : ' (独立权利要求)';
+                let result = `${indent}${depth > 0 ? '├─ ' : '● '}权${num}${refStr}\n`;
+                if (refedBy[num]) {
+                    for (let i = 0; i < refedBy[num].length; i++) {
+                        result += renderTree(refedBy[num][i], depth + 1, new Set(visited));
+                    }
+                }
+                return result;
+            }
+
+            if (displayRoots.length === 0) {
+                return '<div class="tree-container">无法构建引用树：未找到独立权利要求</div>';
+            }
+
+            let tree = '';
+            for (let root of displayRoots) {
+                tree += renderTree(root);
+            }
+
+            return `<h4 style="margin-top:20px;margin-bottom:8px;">🌳 引用关系树</h4><div class="tree-container">${tree}</div>`;
+        }
+
+        function loadExample() {
+            document.getElementById('claimsInput').value = `1. 一种数据采集装置，其特征在于，包括：壳体（1）、传感器（2）和处理器（3）。
+2. 根据权利要求1所述的数据采集装置，其特征在于，所述壳体（1）为金属材质。
+3. 根据权利要求1或2所述的数据采集装置，其特征在于，还包括显示器（4）。
+4. 根据权利要求3所述的数据采集装置，其特征在于，所述显示器（4）为触摸屏。
+5. 根据权利要求1至3任一项所述的数据采集装置，其特征在于，还包括无线通信模块。
+6. 根据权利要求5所述的数据采集装置，其特征在于，所述无线通信模块为蓝牙模块。
+7. 根据权利要求6所述的数据采集装置，其特征在于，所述蓝牙模块…`;
+        }
+    </script>
+</body>
+</html>

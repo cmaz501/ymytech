@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>附图标记一致性检查 - 开迈科技 kamaytech</title>
+    <style>
+        :root {
+            --primary: #7c3aed; --primary-light: #8b5cf6;
+            --accent: #10b981; --bg: #f8f9fa; --text: #1f2937;
+            --text-secondary: #6b7280; --border: #e5e7eb;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+
+        .navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 40px; }
+        .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+        .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
+        .nav-logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700; }
+        .nav-logo-text { font-size:20px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+        .nav-links a { text-decoration:none; color:var(--text-secondary); font-size:15px; font-weight:500; transition:color 0.2s; position:relative; }
+        .nav-links a:hover,.nav-links a.active { color:var(--primary); }
+        .nav-links a.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
+
+        .page-header { max-width:1200px; margin:0 auto; padding:24px 40px 0; text-align:center; }
+        .page-header h2 { font-size:24px; font-weight:700; color:var(--text); }
+        .page-header p { color:var(--text-secondary); font-size:14px; margin-top:6px; }
+
+        .container { max-width:1400px; margin:20px auto; padding:0 40px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+        @media(max-width:1000px){ .container { grid-template-columns:1fr; padding:0 16px; } }
+
+        .panel { background:#fff; border-radius:12px; padding:20px; border:1px solid var(--border); }
+        .panel h3 { font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        textarea { width:100%; min-height:160px; padding:10px; border:1px solid var(--border); border-radius:8px; font-size:13px; line-height:1.6; resize:vertical; font-family:inherit; outline:none; transition:border-color 0.2s; }
+        textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+        .hint { color:var(--text-secondary); font-size:12px; margin-top:4px; }
+
+        .btn-row { text-align:center; margin:24px 0; }
+        .btn { padding:12px 36px; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; }
+        .btn-primary { background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; }
+        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(124,58,237,0.3); }
+
+        .result-section { max-width:1400px; margin:0 auto; padding:0 40px 40px; }
+        .result-card { background:#fff; border-radius:12px; padding:24px; border:1px solid var(--border); margin-bottom:20px; }
+        .result-card h4 { font-size:16px; margin-bottom:12px; }
+
+        .stats-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+        .stat-pill { padding:8px 16px; border-radius:20px; font-size:14px; font-weight:600; }
+        .stat-green { background:#dcfce7; color:#166534; }
+        .stat-red { background:#fee2e2; color:#991b1b; }
+        .stat-yellow { background:#fef9c3; color:#854d0e; }
+        .stat-blue { background:#dbeafe; color:#1e40af; }
+
+        .tag-list { display:flex; flex-wrap:wrap; gap:8px; }
+        .tag { padding:4px 12px; border-radius:6px; font-size:13px; font-family:monospace; }
+        .tag-missing { background:#fee2e2; color:#991b1b; }
+        .tag-extra { background:#fef9c3; color:#854d0e; }
+        .tag-ok { background:#dcfce7; color:#166534; }
+
+        .venn-hint { margin-top:20px; padding:16px; background:#f0f9ff; border-radius:8px; border-left:4px solid #3b82f6; font-size:14px; }
+
+        .footer { background:#1f2937; color:#d1d5db; padding:36px 40px 28px; text-align:center; margin-top:48px; }
+        .footer-inner { max-width:1200px; margin:0 auto; }
+        .footer-brand { font-size:18px; font-weight:700; color:#fff; margin-bottom:6px; }
+        .footer-slogan { color:#9ca3af; font-size:13px; margin-bottom:20px; }
+        .footer-divider { border:none; border-top:1px solid #374151; margin:20px 0; }
+        .footer-copy { font-size:13px; color:#6b7280; }
+
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+        th,td { padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+        th { background:#f8f9fa; font-weight:600; }
+        .cell-miss { color:#dc2626; font-weight:600; }
+        .cell-ok { color:#16a34a; }
+
+        @media(max-width:768px){ .navbar{padding:0 16px} .nav-links{gap:16px} .nav-links a{font-size:13px} .container{padding:0 16px} .result-section{padding:0 16px 40px} }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt583同步撰写.html">专利撰写</a></li>
+                <li><a href="kt21加数字标号.html">自动标号</a></li>
+                <li><a href="kt2-pdf附图标记提取.html">附图提取</a></li>
+                <li><a href="kt3-claims-checker.html">引用检查</a></li>
+                <li><a href="kt4-figure-checker.html" class="active">标记一致性</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h2>🔬 附图标记一致性检查器 KT4</h2>
+        <p>说明书 vs 权利要求书 vs 附图 — 三方标记交叉比对，遗漏/多余一目了然</p>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h3>📄 说明书内容</h3>
+            <textarea id="descInput" placeholder="粘贴专利说明书（具体实施方式部分）...&#10;&#10;例如：&#10;如图1所示，本实施例的数据采集装置包括壳体（1）、传感器（2）和处理器（3）。壳体（1）为金属材质…&#10;传感器（2）安装在壳体（1）内部…"></textarea>
+            <p class="hint">粘贴说明书全文或具体实施方式部分。工具会自动提取所有括号中的数字标记。</p>
+        </div>
+        <div class="panel">
+            <h3>📝 权利要求书内容</h3>
+            <textarea id="claimsInput" placeholder="粘贴权利要求书全文...&#10;&#10;例如：&#10;1. 一种数据采集装置，其特征在于，包括：壳体（1）、传感器（2）和处理器（3）。&#10;2. 根据权利要求1所述的数据采集装置，其特征在于…"></textarea>
+            <p class="hint">粘贴完整的权利要求书。工具会提取所有括号中的数字标记。</p>
+        </div>
+        <div class="panel">
+            <h3>🖼️ 附图标记列表</h3>
+            <textarea id="figInput" placeholder="输入附图中出现的所有标记数字，用逗号、顿号、分号或换行分隔&#10;&#10;例如：&#10;1, 2, 3, 4, 5, 6, 11, 12, 21, 22, 31, 32&#10;&#10;也可以从 KT2 附图提取工具的结果直接粘贴过来"></textarea>
+            <p class="hint">可以从 CAD PDF 附图提取工具（KT2）的结果直接粘贴。支持逗号、分号、空格、换行分隔。</p>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="runCheck()">🔬 开始交叉比对</button>
+    </div>
+
+    <div class="result-section" id="resultArea"></div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">开迈科技 kamaytech</div>
+            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+        </div>
+    </footer>
+
+    <script>
+        function extractNumbers(text) {
+            if (!text || !text.trim()) return new Set();
+            // 匹配中文括号：标号（1）、元件（123）
+            const p1 = /（(\d+)）/g;
+            // 匹配英文括号：part (1), element (123)
+            const p2 = /\((\d+)\)/g;
+            const nums = new Set();
+            let m;
+            for (let p of [p1, p2]) {
+                while ((m = p.exec(text)) !== null) {
+                    const n = parseInt(m[1]);
+                    if (n > 0 && n <= 9999) nums.add(n);
+                }
+            }
+            return nums;
+        }
+
+        function parseFigureList(text) {
+            if (!text || !text.trim()) return new Set();
+            // Split by various delimiters
+            const cleaned = text.replace(/[、，,;；\s\n\r]+/g, ' ').trim();
+            const parts = cleaned.split(/\s+/);
+            const nums = new Set();
+            for (let p of parts) {
+                // Remove trailing ； and 、 that KT2 adds
+                const cleaned2 = p.replace(/[；;、，,]$/, '').trim();
+                const n = parseInt(cleaned2);
+                if (!isNaN(n) && n > 0 && n <= 9999) nums.add(n);
+            }
+            return nums;
+        }
+
+        function runCheck() {
+            const descText = document.getElementById('descInput').value;
+            const claimsText = document.getElementById('claimsInput').value;
+            const figText = document.getElementById('figInput').value;
+            const resultArea = document.getElementById('resultArea');
+
+            if (!descText.trim() && !claimsText.trim() && !figText.trim()) {
+                resultArea.innerHTML = '<div class="result-card"><h4>⚠️ 请至少填写一个输入区域</h4></div>';
+                return;
+            }
+
+            const descNums = extractNumbers(descText);
+            const claimsNums = extractNumbers(claimsText);
+            const figNums = parseFigureList(figText);
+
+            const allTextNums = new Set([...descNums, ...claimsNums]);
+            const inBoth = new Set([...descNums].filter(x => claimsNums.has(x)));
+
+            // 缺失分析
+            const inDescNotFig = new Set([...descNums].filter(x => !figNums.has(x)));
+            const inClaimsNotFig = new Set([...claimsNums].filter(x => !figNums.has(x)));
+            const inFigNotDesc = new Set([...figNums].filter(x => !descNums.has(x)));
+            const inFigNotClaims = new Set([...figNums].filter(x => !claimsNums.has(x)));
+            const inDescNotClaims = new Set([...descNums].filter(x => !claimsNums.has(x)));
+            const inClaimsNotDesc = new Set([...claimsNums].filter(x => !descNums.has(x)));
+
+            // 如果附图标记为空但有说明书/权利要求内容，只做说明书 vs 权利要求
+            const hasFigData = figNums.size > 0;
+
+            function renderNumList(numSet, cls) {
+                if (numSet.size === 0) return '<span style="color:#16a34a;">无</span>';
+                const sorted = [...numSet].sort((a, b) => a - b);
+                return `<div class="tag-list">${sorted.map(n => `<span class="tag ${cls}">${n}</span>`).join('')}</div>`;
+            }
+
+            let html = '';
+
+            // 概览
+            html += `<div class="result-card">
+                <h4>📊 标记统计概览</h4>
+                <div class="stats-row">
+                    <span class="stat-pill stat-blue">说明书标记：${descNums.size} 个</span>
+                    <span class="stat-pill stat-blue">权利要求标记：${claimsNums.size} 个</span>
+                    <span class="stat-pill stat-green">两者一致：${inBoth.size} 个</span>`;
+
+            if (hasFigData) {
+                html += `<span class="stat-pill stat-blue">附图标记：${figNums.size} 个</span>`;
+            }
+            html += `</div>`;
+
+            // 建议：从 KT2 粘贴
+            if (!hasFigData && descNums.size > 0) {
+                html += `<div class="venn-hint">💡 <strong>提示</strong>：如需要与附图做三方比对，请先使用 <a href="kt2-pdf附图标记提取.html" style="color:var(--primary);">KT2 附图标记提取工具</a> 提取 CAD PDF 中的标记数字，再粘贴到右侧「附图标记列表」。目前仅做说明书与权利要求书之间的比对。</div>`;
+            }
+            html += `</div>`;
+
+            // 问题报告
+            if (hasFigData) {
+                // 说明书 vs 附图
+                if (inDescNotFig.size > 0 || inFigNotDesc.size > 0) {
+                    html += `<div class="result-card">
+                        <h4>📄 说明书 ↔ 🖼️ 附图</h4>
+                        <div class="stats-row">
+                            <span class="stat-pill stat-red">说明书有但附图无：${inDescNotFig.size} 个</span>
+                            <span class="stat-pill stat-yellow">附图有但说明书无：${inFigNotDesc.size} 个</span>
+                        </div>
+                        ${inDescNotFig.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#dc2626;">⚠️ 说明书提到了但附图中缺失的标记：</p>${renderNumList(inDescNotFig, 'tag-missing')}` : ''}
+                        ${inFigNotDesc.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#b45309;">⚠️ 附图中出现但说明书中未提及的标记：</p>${renderNumList(inFigNotDesc, 'tag-extra')}` : ''}
+                    </div>`;
+                }
+
+                // 权利要求 vs 附图
+                if (inClaimsNotFig.size > 0 || inFigNotClaims.size > 0) {
+                    html += `<div class="result-card">
+                        <h4>📝 权利要求书 ↔ 🖼️ 附图</h4>
+                        <div class="stats-row">
+                            <span class="stat-pill stat-red">权利要求有但附图无：${inClaimsNotFig.size} 个</span>
+                            <span class="stat-pill stat-yellow">附图有但权利要求无：${inFigNotClaims.size} 个</span>
+                        </div>
+                        ${inClaimsNotFig.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#dc2626;">⚠️ 权利要求提到了但附图中缺失的标记：</p>${renderNumList(inClaimsNotFig, 'tag-missing')}` : ''}
+                        ${inFigNotClaims.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#b45309;">⚠️ 附图中出现但权利要求未提及的标记：</p>${renderNumList(inFigNotClaims, 'tag-extra')}` : ''}
+                    </div>`;
+                }
+            }
+
+            // 说明书 vs 权利要求（始终检查）
+            if (inDescNotClaims.size > 0 || inClaimsNotDesc.size > 0) {
+                html += `<div class="result-card">
+                    <h4>📄 说明书 ↔ 📝 权利要求书</h4>
+                    <div class="stats-row">
+                        <span class="stat-pill stat-red">说明书有但权利要求无：${inDescNotClaims.size} 个</span>
+                        <span class="stat-pill stat-yellow">权利要求有但说明书无：${inClaimsNotDesc.size} 个</span>
+                    </div>
+                    ${inDescNotClaims.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#dc2626;">⚠️ 说明书中出现但权利要求书未出现的标记：</p>${renderNumList(inDescNotClaims, 'tag-missing')}` : ''}
+                    ${inClaimsNotDesc.size > 0 ? `<p style="margin-top:8px;font-weight:600;color:#b45309;">⚠️ 权利要求中出现但说明书未出现的标记：</p>${renderNumList(inClaimsNotDesc, 'tag-extra')}` : ''}
+                </div>`;
+            }
+
+            // 全部一致
+            const totalIssues = inDescNotFig.size + inClaimsNotFig.size + inFigNotDesc.size + inFigNotClaims.size + inDescNotClaims.size + inClaimsNotDesc.size;
+            if (totalIssues === 0 && (descNums.size > 0 || claimsNums.size > 0)) {
+                html += `<div class="result-card" style="text-align:center;padding:40px;">
+                    <div style="font-size:48px;margin-bottom:12px;">✅</div>
+                    <h4 style="color:#16a34a;">所有标记完全一致！</h4>
+                    <p style="color:var(--text-secondary);">说明书、权利要求书${hasFigData ? '、附图' : ''}中的标记数字完全匹配，未发现不一致。</p>
+                </div>`;
+            }
+
+            // 汇总表
+            if (allTextNums.size > 0) {
+                html += `<div class="result-card">
+                    <h4>📋 详细对照表</h4>
+                    <div class="table-wrap">
+                    <table>
+                        <tr><th>标记号</th><th>说明书</th><th>权利要求书</th>${hasFigData ? '<th>附图</th>' : ''}<th>状态</th></tr>`;
+                const allNums = [...allTextNums];
+                if (hasFigData) {
+                    for (let n of figNums) { if (!allTextNums.has(n)) allNums.push(n); }
+                }
+                allNums.sort((a, b) => a - b);
+                for (let n of allNums) {
+                    const inDesc = descNums.has(n);
+                    const inClaims = claimsNums.has(n);
+                    const inFig = figNums.has(n);
+                    let status = '', statusColor = '';
+                    if (inDesc && inClaims && (!hasFigData || inFig)) {
+                        status = '✅ 一致'; statusColor = 'cell-ok';
+                    } else {
+                        const missing = [];
+                        if (!inDesc) missing.push('说明书');
+                        if (!inClaims) missing.push('权利要求');
+                        if (hasFigData && !inFig) missing.push('附图');
+                        status = '⚠️ 缺：' + missing.join('、');
+                        statusColor = 'cell-miss';
+                    }
+                    html += `<tr>
+                        <td><strong>${n}</strong></td>
+                        <td>${inDesc ? '✅' : '❌'}</td>
+                        <td>${inClaims ? '✅' : '❌'}</td>
+                        ${hasFigData ? `<td>${inFig ? '✅' : '❌'}</td>` : ''}
+                        <td class="${statusColor}">${status}</td>
+                    </tr>`;
+                }
+                html += `</table></div></div>`;
+            }
+
+            resultArea.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

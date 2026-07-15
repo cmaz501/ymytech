@@ -257,6 +257,14 @@
             background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(96,165,250,0.12));
             color: #3b82f6;
         }
+        .tool-card-icon.red {
+            background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(248,113,113,0.12));
+            color: #ef4444;
+        }
+        .tool-card-icon.orange {
+            background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(251,146,60,0.12));
+            color: #f97316;
+        }
         .tool-card h3 {
             font-size: 20px;
             font-weight: 700;
@@ -368,6 +376,8 @@
                 <li><a href="tools/kt583同步撰写.html">专利撰写</a></li>
                 <li><a href="tools/kt21加数字标号.html">自动标号</a></li>
                 <li><a href="tools/kt2-pdf附图标记提取.html">附图提取</a></li>
+                <li><a href="tools/kt3-claims-checker.html">引用检查</a></li>
+                <li><a href="tools/kt4-figure-checker.html">标记一致性</a></li>
             </ul>
         </div>
     </nav>
@@ -409,6 +419,18 @@
                 <div class="tool-card-icon blue">🖼️</div>
                 <h3>CAD PDF 附图标记提取 KT2</h3>
                 <p>上传 CAD 导出的 PDF 图纸，自动提取所有标号数字，去重排序一键输出为撰写格式，省去手工抄录附图标记的麻烦。</p>
+                <span class="tag">新上线</span>
+            </a>
+            <a href="tools/kt3-claims-checker.html" class="tool-card">
+                <div class="tool-card-icon red">🔍</div>
+                <h3>权利要求引用检查器 KT3</h3>
+                <p>自动解析权利要求间的引用关系，检测自引用、引用不存在、循环引用、多引多等常见问题，生成引用关系树状图。</p>
+                <span class="tag">新上线</span>
+            </a>
+            <a href="tools/kt4-figure-checker.html" class="tool-card">
+                <div class="tool-card-icon orange">🔬</div>
+                <h3>附图标记一致性检查 KT4</h3>
+                <p>说明书、权利要求书、附图三方标记交叉比对，快速发现遗漏或多余标记，生成详细对照表，确保三者一致。</p>
                 <span class="tag">新上线</span>
             </a>
         </div>
