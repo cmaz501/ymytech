@@ -620,11 +620,15 @@
             toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
         }
 
-        // 本地文件保存
+        // 本地文件保存（同时保存术语映射库 + 撰写工作区）
         let localFileHandle = null;
+        function getCombinedContent() {
+            const mapping = document.getElementById('mapping').value.trim();
+            const workspace = document.getElementById('workspace').value.trim();
+            return '========== 术语映射库 ==========\n' + mapping + '\n\n========== 撰写工作区 ==========\n' + workspace;
+        }
         async function saveToLocalFile() {
-            const content = document.getElementById('workspace').value;
-            if (!content.trim()) { showToast('⚠️ 工作区内容为空，请先撰写内容', 'error'); return; }
+            const content = getCombinedContent();
             if (localFileHandle) {
                 if (confirm('📄 是否覆盖上次保存的 "专利文案.txt" 文件？\n\n点击"确定"覆盖，点击"取消"重新选择位置。')) {
                     try {
@@ -646,7 +650,7 @@
                     const w = await fh.createWritable();
                     await w.write(content);
                     await w.close();
-                    showToast('✅ 文件已保存到 ' + fh.name, 'success');
+                    showToast('✅ 文件已保存 术语映射库+工作区 到 ' + fh.name, 'success');
                 } catch (err) {
                     if (err.name === 'AbortError') showToast('ℹ️ 保存已取消', 'info');
                     else fallbackSave(content);
@@ -655,12 +659,12 @@
         }
         function fallbackSave(content) {
             try {
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const blob = new Blob([content || getCombinedContent()], { type: 'text/plain;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a'); a.href = url; a.download = '专利文案.txt';
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
-                showToast('📁 文件已下载', 'info');
+                showToast('📁 文件已下载（含术语映射库+工作区）', 'info');
                 localFileHandle = null;
             } catch (err) { showToast('❌ 保存失败: ' + err.message, 'error'); }
         }
