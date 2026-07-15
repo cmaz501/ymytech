@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAD PDF附图标记提取 - 开迈科技 kamaytech</title>
+    <style>
+        /* ===== 共享导航样式 ===== */
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --primary-dark: #6d28d9;
+            --accent: #10b981;
+            --bg: #f8f9fa;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .nav-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ===== 页面标题 ===== */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 40px 0;
+            text-align: center;
+        }
+        .page-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            background: #1f2937;
+            color: #d1d5db;
+            padding: 36px 40px 28px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-brand { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
+        .footer-slogan { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+        .footer-divider { border: none; border-top: 1px solid #374151; margin: 20px 0; }
+        .footer-copy { font-size: 13px; color: #6b7280; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 13px; }
+            .page-header { padding: 16px 16px 0; }
+        }
+
+        /* ===== 工具本体样式 ===== */
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+        }
+
+        .tool-body {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 40px;
+            height: calc(100vh - 260px);
+            min-height: 500px;
+            box-sizing: border-box;
+        }
+        #left-pane {
+            grid-column: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        #right-panes {
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+        .viewer-pane {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            overflow: auto;
+            position: relative;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        #pdf-container {
+            flex-grow: 1;
+            min-height: 0;
+            overflow: auto;
+        }
+        .number-pane {
+            white-space: pre-wrap;
+            font-family: "Consolas", "Courier New", monospace;
+            flex-grow: 1;
+            min-height: 0;
+            overflow: auto;
+        }
+        .controls {
+            margin-bottom: 12px;
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        canvas {
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 4px;
+        }
+        .process-btn {
+            margin: 10px 0;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .process-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+        }
+        input[type="file"] {
+            padding: 6px;
+            border: 2px dashed #dee2e6;
+            border-radius: 6px;
+            width: 100%;
+            cursor: pointer;
+        }
+        input[type="range"] {
+            flex-grow: 1;
+        }
+        #scale-value {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 50px;
+        }
+        textarea.number-pane {
+            resize: vertical;
+            width: 100%;
+            height: calc(100% - 80px);
+            font-size: 18px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            outline: none;
+        }
+        textarea.number-pane:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .tool-body {
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: 0 16px;
+            }
+            #left-pane, #right-panes { height: auto; min-height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo">
+                <div class="nav-logo-icon">K</div>
+                <span class="nav-logo-text">开迈科技</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt583同步撰写.html">专利撰写</a></li>
+                <li><a href="kt21加数字标号.html">自动标号</a></li>
+                <li><a href="kt2-pdf附图标记提取.html" class="active">附图提取</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h2>🖼️ CAD PDF 附图标记提取工具 KT2</h2>
+        <p>上传 CAD 导出的 PDF 图纸，自动提取所有标号数字，去重排序一键输出</p>
+    </div>
+
+    <!-- 工具主体 -->
+    <div class="tool-body">
+        <!-- 左侧 PDF 显示窗口 -->
+        <div id="left-pane" class="viewer-pane">
+            <button class="process-btn" onclick="processNumbers()">
+                ⚠️ 请务必选择 CAD 直接导出的 PDF<br>
+                <small style="font-weight:400;">拖动滚动条调整图形大小 | 提取结果请自己认真检查 | CAD 打印 PDF 快捷键 Ctrl+P</small>
+            </button>
+            <div class="controls">
+                <input type="file" id="pdf-input" accept="application/pdf">
+                <div class="slider-container" style="margin-top:8px;">
+                    <span>🔍</span>
+                    <input type="range" id="zoom-slider" min="0.5" max="2" step="0.1" value="1">
+                    <span id="scale-value">100%</span>
+                </div>
+            </div>
+            <div id="pdf-container"></div>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div id="right-panes">
+            <!-- 原始数字窗口 -->
+            <div class="viewer-pane" style="height: calc(50% - 10px);">
+                <h3 style="margin-bottom:10px;">📋 提取的原始数字：</h3>
+                <div id="raw-numbers" class="number-pane"></div>
+            </div>
+
+            <!-- 处理结果窗口 -->
+            <div class="viewer-pane" style="height: calc(50% - 10px);">
+                <button class="process-btn" onclick="processNumbers()">🔄 处理数字（去重排序）</button>
+                <label for="font-size-input" style="margin-top:8px;display:block;font-weight:600;">字号：</label>
+                <input type="number" id="font-size-input" value="18" min="10" max="50" step="1" onchange="updateFontSize()" style="width:80px;padding:4px 8px;border-radius:6px;border:1px solid #dee2e6;">
+                <textarea id="processed-numbers" class="number-pane" placeholder="去重排序后的结果…"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">开迈科技 kamaytech</div>
+            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+    <script>
+        let currentPdf = null;
+        let currentScale = 1.0;
+        let numberStore = [];
+        const pdfContainer = document.getElementById('pdf-container');
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+        document.getElementById('pdf-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file || file.type !== "application/pdf") return;
+
+            const buffer = await file.arrayBuffer();
+            currentPdf = await pdfjsLib.getDocument(buffer).promise;
+
+            pdfContainer.innerHTML = "";
+            document.getElementById('raw-numbers').textContent = "";
+            document.getElementById('processed-numbers').value = "";
+            numberStore = [];
+
+            for (let pageNum = 1; pageNum <= currentPdf.numPages; pageNum++) {
+                await processPage(pageNum);
+            }
+            updateRawNumbers();
+        });
+
+        document.getElementById('zoom-slider').addEventListener('input', (e) => {
+            currentScale = parseFloat(e.target.value);
+            document.getElementById('scale-value').textContent =
+                `${Math.round(currentScale * 100)}%`;
+            if (currentPdf) renderAllPages();
+        });
+
+        async function processPage(pageNum) {
+            try {
+                const page = await currentPdf.getPage(pageNum);
+                await renderPage(page);
+                const textContent = await page.getTextContent();
+                const numbers = extractNumbers(textContent.items);
+                numberStore = numberStore.concat(numbers);
+            } catch (err) {
+                console.error(`第${pageNum}页处理失败:`, err);
+            }
+        }
+
+        function extractNumbers(textItems) {
+            const numberPattern = /-?\d+\.?\d*/g;
+            return textItems
+                .map(item => item.str.match(numberPattern))
+                .filter(matches => matches !== null)
+                .flat()
+                .map(Number);
+        }
+
+        function updateRawNumbers() {
+            document.getElementById('raw-numbers').textContent =
+                numberStore.join(', ');
+        }
+
+        function processNumbers() {
+            const uniqueNumbers = [...new Set(numberStore)];
+            const sortedNumbers = uniqueNumbers.sort((a, b) => a - b);
+            document.getElementById('processed-numbers').value =
+                sortedNumbers.map(num => `${num}、；`).join('');
+        }
+
+        async function renderPage(page) {
+            const viewport = page.getViewport({ scale: currentScale });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+            pdfContainer.appendChild(canvas);
+        }
+
+        async function renderAllPages() {
+            pdfContainer.innerHTML = "";
+            for (let pageNum = 1; pageNum <= currentPdf.numPages; pageNum++) {
+                const page = await currentPdf.getPage(pageNum);
+                await renderPage(page);
+            }
+        }
+
+        function updateFontSize() {
+            const fontSize = document.getElementById('font-size-input').value;
+            document.getElementById('processed-numbers').style.fontSize = `${fontSize}px`;
+        }
+    </script>
+
+</body>
+</html>
