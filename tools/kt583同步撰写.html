@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>同步撰写工具 - 开迈科技 kamaytech</title>
+    <style>
+        /* ===== 共享导航样式 ===== */
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --primary-dark: #6d28d9;
+            --accent: #10b981;
+            --bg: #f8f9fa;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .nav-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ===== 页面标题 ===== */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 40px 0;
+            text-align: center;
+        }
+        .page-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            background: #1f2937;
+            color: #d1d5db;
+            padding: 36px 40px 28px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-brand { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
+        .footer-slogan { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+        .footer-divider { border: none; border-top: 1px solid #374151; margin: 20px 0; }
+        .footer-copy { font-size: 13px; color: #6b7280; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 13px; }
+            .page-header { padding: 16px 16px 0; }
+        }
+
+        /* ===== 工具原有样式（从 kt583 移植） ===== */
+        body {
+            font-family: "Microsoft YaHei", 微软雅黑, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s, font-family 0.2s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 2px solid #800080;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, font-family 0.2s;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+            transition: color 0.3s, font-family 0.2s;
+        }
+
+        .dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .dropdown-item {
+            padding: 2px 5px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            color: #333;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .dropdown-item:hover,
+        .dropdown-item.active { background-color: #e9ecef; }
+
+        .toggle-mode {
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+            margin-left: 8px;
+        }
+        .toggle-mode:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(124,58,237,0.4); }
+        .toggle-mode:active { transform: translateY(0); }
+
+        .save-controls {
+            margin: 15px 0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            transition: color 0.3s;
+        }
+        .save-controls button {
+            padding: 2px 5px;
+            background: #1ba000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .save-controls button:hover { background: #8b5cf6; transform: scale(1.02); }
+        .save-controls button:active { transform: scale(0.98); }
+        #localSaveBtn { background: #e67e22; padding: 4px 12px; font-weight: 500; }
+        #localSaveBtn:hover { background: #d35400; }
+
+        .backup-panel {
+            width: 98%;
+            border-top: 2px solid #4CAF50;
+            padding: 20px;
+            background: #f8fff8;
+            margin-top: 20px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .backup-list { max-height: 300px; overflow-y: auto; margin-top: 10px; }
+        .backup-item {
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .backup-time { color: #4CAF50; font-size: 0.95em; font-weight: bold; transition: color 0.3s; }
+        .backup-preview { color: #666; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.3s; }
+        .restore-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            float: right;
+            transition: background-color 0.2s;
+        }
+        .restore-btn:hover { background: #45a049; }
+        .backup-title {
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            cursor: pointer;
+            background-color: #e8f5e9;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.3s;
+        }
+        .backup-title:hover { background-color: #d0e9d1; }
+
+        .flex-container { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+        .mapping-container { flex: 1 1 100%; position: relative; }
+        .mapping-container>label { margin-bottom: 12px; }
+        .workspace-container { flex: 1 1 100%; display: flex; flex-direction: column; gap: 8px; }
+        .term-stats-container {
+            flex: 1 1 100%;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        #termStats {
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #0313f3;
+            white-space: pre-wrap;
+            word-break: break-all;
+            transition: font-family 0.2s;
+        }
+        p { margin: 0; transition: color 0.3s, font-family 0.2s; }
+        #mappingWarning { color: red; font-size: 14px; margin-top: 5px; display: none; }
+
+        .setting-select {
+            padding: 4px 8px;
+            white-space: nowrap;
+            border-radius: 6px;
+            border: 2px solid #666;
+            background-color: #bef5d9;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+            margin-left: 8px;
+            font-family: inherit;
+        }
+        .setting-select:hover { background-color: #e9ecef; }
+
+        textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+        }
+
+        .save-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            font-family: inherit;
+        }
+        .save-toast.show { opacity: 1; }
+        .save-toast.success { background: #2e7d32; }
+        .save-toast.error { background: #c62828; }
+        .save-toast.info { background: #1565c0; }
+
+        /* 主题：白天 */
+        body.day-mode { background-color: #f4f4f9; color: #333; }
+        body.day-mode textarea { background-color: #fff; color: #333; border-color: #800080; }
+        body.day-mode label { color: #333; }
+        body.day-mode .dropdown { background: white; border-color: #ddd; }
+        body.day-mode .dropdown-item { color: #333; }
+        body.day-mode .dropdown-item:hover,
+        body.day-mode .dropdown-item.active { background-color: #e9ecef; }
+        body.day-mode .backup-panel { background: #f8fff8; border-top-color: #4CAF50; }
+        body.day-mode .backup-item { background: white; border-color: #ddd; }
+        body.day-mode .backup-title { background-color: #e8f5e9; color: #4CAF50; }
+        body.day-mode .backup-title:hover { background-color: #d0e9d1; }
+        body.day-mode .term-stats-container { background: #f9f9f9; border-color: #ddd; }
+        body.day-mode .setting-select { background-color: #bef5d9; color: #333; border-color: #666; }
+
+        /* 主题：黑夜 */
+        body.night-mode { background-color: #1a1a2e; color: #e0e0e0; }
+        body.night-mode textarea { background-color: #2d2d44; color: #e8e8e8; border-color: #5a5a7a; }
+        body.night-mode label,
+        body.night-mode .backup-time,
+        body.night-mode .backup-preview,
+        body.night-mode .save-controls div,
+        body.night-mode p { color: #e0e0e0; }
+        body.night-mode .backup-title { background-color: #2d2d44; color: #8bc34a; }
+        body.night-mode .backup-title:hover { background-color: #3d3d54; }
+        body.night-mode .dropdown { background-color: #2d2d44; border-color: #5a5a7a; }
+        body.night-mode .dropdown-item { color: #e8e8e8; }
+        body.night-mode .dropdown-item:hover,
+        body.night-mode .dropdown-item.active { background-color: #3d3d54; color: #ffffff; }
+        body.night-mode .backup-panel { background-color: #1a1a2e; border-top-color: #8bc34a; }
+        body.night-mode .backup-item { background-color: #2d2d44; border-color: #5a5a7a; }
+        body.night-mode .backup-time { color: #8bc34a; }
+        body.night-mode .backup-preview { color: #b0b0c0; }
+        body.night-mode .restore-btn { background: #6a9f3a; }
+        body.night-mode .restore-btn:hover { background: #5a8f2a; }
+        body.night-mode .term-stats-container { background-color: #2d2d44; border-color: #5a5a7a; }
+        body.night-mode #termStats { color: #7aa9ff !important; }
+        body.night-mode .term-stats-container h4 { color: #8bc34a !important; }
+        body.night-mode .setting-select { background-color: #3d3d54; color: #e8e8e8; border-color: #7a7a9a; }
+        body.night-mode .setting-select:hover { background-color: #4d4d64; }
+        body.night-mode #modeText { color: #b388ff !important; }
+        body.night-mode .save-controls button { background: #2e7d32; }
+        body.night-mode .save-controls button:hover { background: #388e3c; }
+        body.night-mode #localSaveBtn { background: #d35400; }
+        body.night-mode #localSaveBtn:hover { background: #a04000; }
+
+        /* 主题：护眼 */
+        body.eye-protect-mode { background-color: #dcedc8; color: #1b5e20; }
+        body.eye-protect-mode textarea { background-color: #f1f8e9; color: #1b5e20; border-color: #43a047; }
+        body.eye-protect-mode label,
+        body.eye-protect-mode .backup-time,
+        body.eye-protect-mode .backup-preview,
+        body.eye-protect-mode .save-controls div,
+        body.eye-protect-mode p { color: #1b5e20; }
+        body.eye-protect-mode .backup-title { background-color: #c8e6c9; color: #2e7d32; }
+        body.eye-protect-mode .backup-title:hover { background-color: #a5d6a7; }
+        body.eye-protect-mode .dropdown { background-color: #f1f8e9; border-color: #43a047; }
+        body.eye-protect-mode .dropdown-item { color: #1b5e20; }
+        body.eye-protect-mode .dropdown-item:hover,
+        body.eye-protect-mode .dropdown-item.active { background-color: #c8e6c9; }
+        body.eye-protect-mode .backup-panel { background-color: #dcedc8; border-top-color: #43a047; }
+        body.eye-protect-mode .backup-item { background-color: #f1f8e9; border-color: #81c784; }
+        body.eye-protect-mode .term-stats-container { background-color: #f1f8e9; border-color: #81c784; }
+        body.eye-protect-mode .setting-select { background-color: #c8e6c9; color: #1b5e20; border-color: #43a047; }
+        body.eye-protect-mode .setting-select:hover { background-color: #a5d6a7; }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            textarea { height: 120px; }
+            .save-controls { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body class="day-mode">
+
+    <!-- Toast 提示 -->
+    <div id="saveToast" class="save-toast"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo">
+                <div class="nav-logo-icon">K</div>
+                <span class="nav-logo-text">开迈科技</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt583同步撰写.html" class="active">专利撰写</a></li>
+                <li><a href="kt21加数字标号.html">自动标号</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h2>✍️ 同步撰写工具 KT583</h2>
+        <p>术语映射 + 数字自动替换 + 备份恢复 — 专利撰写效率利器</p>
+    </div>
+
+    <div class="container">
+        <div class="flex-container">
+            <div style="flex:1">
+                <!-- 术语映射库 -->
+                <div class="mapping-container">
+                    <label for="mapping">
+                        🤪 术语映射库：
+                        <button id="toggleModeBtn" class="toggle-mode">模式切换按钮</button>
+                        <span id="modeText" style="font-family: inherit; font-size: 10px; color: #7c3aed;">
+                        现在是写权要，带括号，如西蓝花（11），爽的一批</span>
+                    </label>
+                    <textarea id="mapping" style="height: 100px;">
+11、西蓝花；111、猪八戒；12、大白菜；13、胡萝卜；14、菠菜；15、茄子；
+21、黄瓜；22、番茄；23、土豆；24、洋葱；25、青椒；26、红椒；27、南瓜；28、冬瓜；29、苦瓜；</textarea>
+                    <div id="mappingWarning"></div>
+                </div>
+
+                <!-- 撰写工作区 -->
+                <div class="workspace-container">
+                    <label for="workspace" id="workspaceLabel">
+                        🛠️ 撰写工作区（输入数字自动替换）：
+                        <select id="themeSelect" class="setting-select" onchange="changeTheme(this.value)">
+                            <option value="day-mode">☀️ 白天</option>
+                            <option value="night-mode">🌙 黑夜</option>
+                            <option value="eye-protect-mode">🌿 护眼</option>
+                        </select>
+                        <select id="fontSelect" class="setting-select" onchange="changeFont(this.value)">
+                            <option value="Microsoft YaHei, 微软雅黑, sans-serif">🔤 微软雅黑</option>
+                            <option value="SimSun, 宋体, serif">🔤 宋体</option>
+                            <option value="KaiTi, 楷体, serif">🔤 楷体</option>
+                        </select>
+                    </label>
+                    <textarea id="workspace" style="height:300px;"></textarea>
+                    <div id="dropdown" class="dropdown"></div>
+                </div>
+
+                <!-- 术语统计 -->
+                <div class="term-stats-container">
+                    <h4 style="margin: 0 0 10px 0; color: #4CAF50;">📊 术语统计</h4>
+                    <div id="termStats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 保存控制 -->
+    <div class="save-controls">
+        <div style="color: #f103de; font-weight: bold;">
+            ⏱️ 已输入：<span id="typingTimer">0:00</span>
+        </div>
+        <button onclick="manualSave()">💾 立即保存 Ctrl+S</button>
+        <button id="localSaveBtn" onclick="saveToLocalFile()">📁 本地文件保存</button>
+        <div style="color:#f10303;">⏳ 自动保存：<span id="countdown">5:00</span></div>
+    </div>
+
+    <!-- 备份面板 -->
+    <div class="backup-panel">
+        <h5 class="backup-title" onclick="toggleBackupPanel()">
+            📚 备份历史（最多10条 🪭 折叠）
+        </h5>
+        <div class="backup-list" id="backupList" style="display: none;"></div>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">开迈科技 kamaytech</div>
+            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+        </div>
+    </footer>
+
+    <script>
+        // 禁用右键/F12
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+    <script>
+        function toggleBackupPanel() {
+            const el = document.getElementById('backupList');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+
+    <script>
+        // ===== 存储系统 =====
+        const MAX_BACKUPS = 10;
+        const STORAGE_KEY = 'KT_BACKUP_V2';
+
+        function formatTime(date = new Date()) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const h = String(now.getHours()).padStart(2, '0');
+            const mi = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            return `${y}/${m}/${d} ${h}:${mi}:${s}`;
+        }
+
+        function saveData() {
+            const backups = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const newBackup = {
+                time: formatTime(),
+                mapping: document.getElementById('mapping').value,
+                workspace: document.getElementById('workspace').value
+            };
+            backups.unshift(newBackup);
+            if (backups.length > MAX_BACKUPS) backups.length = MAX_BACKUPS;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(backups));
+            updateBackupList(backups);
+        }
+
+        function updateBackupList(backups) {
+            const list = document.getElementById('backupList');
+            list.innerHTML = backups.map((item, index) => `
+                <div class="backup-item">
+                    <div class="backup-time">${item.time}</div>
+                    <div class="backup-preview" title="${item.workspace}">${item.workspace.replace(/\n/g, ' ').substr(0, 30)}${item.workspace.length > 30 ? '...' : ''}</div>
+                    <button class="restore-btn" onclick="restoreBackup(${index})">恢复</button>
+                </div>`).join('');
+        }
+
+        function restoreBackup(index) {
+            const backups = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const backup = backups[index];
+            if (backup && confirm(`确定要恢复 ${backup.time} 的备份吗？`)) {
+                document.getElementById('mapping').value = backup.mapping;
+                document.getElementById('workspace').value = backup.workspace;
+                saveData();
+            }
+        }
+
+        function manualSave() {
+            saveData();
+            resetTimer();
+            showToast('✅ 已保存到浏览器备份', 'success');
+        }
+
+        // 自动保存定时器
+        let countdown = 300;
+        let timerId;
+        function updateTimerDisplay() {
+            const m = Math.floor(countdown / 60);
+            const s = countdown % 60;
+            document.getElementById('countdown').textContent = `${m}:${String(s).padStart(2, '0')}`;
+        }
+        function startTimer() {
+            timerId = setInterval(() => {
+                countdown--;
+                updateTimerDisplay();
+                if (countdown <= 0) { saveData(); resetTimer(); }
+            }, 1000);
+        }
+        function resetTimer() { clearInterval(timerId); countdown = 300; updateTimerDisplay(); startTimer(); }
+
+        // Toast
+        let toastTimer = null;
+        function showToast(msg, type = 'info') {
+            const el = document.getElementById('saveToast');
+            el.textContent = msg;
+            el.className = 'save-toast ' + type + ' show';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+        }
+
+        // 本地文件保存
+        let localFileHandle = null;
+        async function saveToLocalFile() {
+            const content = document.getElementById('workspace').value;
+            if (!content.trim()) { showToast('⚠️ 工作区内容为空，请先撰写内容', 'error'); return; }
+            if (localFileHandle) {
+                if (confirm('📄 是否覆盖上次保存的 "专利文案.txt" 文件？\n\n点击"确定"覆盖，点击"取消"重新选择位置。')) {
+                    try {
+                        const writable = await localFileHandle.createWritable();
+                        await writable.write(content);
+                        await writable.close();
+                        showToast('✅ 已覆盖保存到 ' + localFileHandle.name, 'success');
+                        return;
+                    } catch (err) { localFileHandle = null; showToast('⚠️ 文件权限已失效，请重新选择保存位置', 'error'); }
+                } else { localFileHandle = null; }
+            }
+            if (window.showSaveFilePicker) {
+                try {
+                    const fh = await window.showSaveFilePicker({
+                        suggestedName: '专利文案.txt',
+                        types: [{ description: '文本文件', accept: { 'text/plain': ['.txt'] } }]
+                    });
+                    localFileHandle = fh;
+                    const w = await fh.createWritable();
+                    await w.write(content);
+                    await w.close();
+                    showToast('✅ 文件已保存到 ' + fh.name, 'success');
+                } catch (err) {
+                    if (err.name === 'AbortError') showToast('ℹ️ 保存已取消', 'info');
+                    else fallbackSave(content);
+                }
+            } else { fallbackSave(content); }
+        }
+        function fallbackSave(content) {
+            try {
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = '专利文案.txt';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast('📁 文件已下载', 'info');
+                localFileHandle = null;
+            } catch (err) { showToast('❌ 保存失败: ' + err.message, 'error'); }
+        }
+
+        // 初始化
+        window.addEventListener('load', () => {
+            const backups = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            updateBackupList(backups);
+            startTimer();
+            window.addEventListener('beforeunload', () => saveData());
+            setInterval(saveData, 300000);
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('keydown', (e) => { if (e.ctrlKey && e.key === 's') { e.preventDefault(); manualSave(); } });
+        });
+    </script>
+
+    <script>
+        // ===== 撰写计时 =====
+        const typingAreas = [document.getElementById('mapping'), document.getElementById('workspace')];
+        let totalTypingTime = 0, currentStartTime = null, typingTimerId = null, isPageVisible = true;
+        function updateTypingTimer() {
+            const elapsed = totalTypingTime + (currentStartTime ? Date.now() - currentStartTime : 0);
+            const m = Math.floor(elapsed / 60000);
+            const s = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('typingTimer').textContent = `${m}:${String(s).padStart(2, '0')}`;
+        }
+        function startTyping() { if (!currentStartTime && isPageVisible) currentStartTime = Date.now(); if (!typingTimerId) typingTimerId = setInterval(updateTypingTimer, 1000); updateTypingTimer(); }
+        function pauseTyping() { if (currentStartTime) { totalTypingTime += Date.now() - currentStartTime; currentStartTime = null; } clearInterval(typingTimerId); typingTimerId = null; updateTypingTimer(); }
+        function checkFocus() { (typingAreas.some(a => document.activeElement === a) && isPageVisible) ? startTyping() : pauseTyping(); }
+        typingAreas.forEach(a => { a.addEventListener('focus', checkFocus); a.addEventListener('blur', checkFocus); });
+        document.addEventListener('visibilitychange', () => { isPageVisible = !document.hidden; checkFocus(); });
+    </script>
+
+    <script>
+        // ===== 术语统计 =====
+        function updateTermStats() {
+            const mt = document.getElementById('mapping').value;
+            const wt = document.getElementById('workspace').value;
+            const lines = mt.split('\n');
+            const rl = [];
+            for (let line of lines) {
+                if (line.trim() === '') { rl.push(''); continue; }
+                const items = line.split(/；+/).filter(i => i.trim());
+                if (items.length === 0) { rl.push(''); continue; }
+                const sl = [];
+                for (let item of items) {
+                    const [key, value] = (item || '').split(/、/).map(s => s.trim());
+                    if (!key || !value) continue;
+                    const count = (wt.match(new RegExp(`\\b${key}\\b`, 'g')) || []).length;
+                    const status = count > 0 ? '√' : '×';
+                    const hs = count > 0 ? 'background-color: yellow;' : '';
+                    sl.push(`<span style="${hs}">${value}${key}（${count}次${status}）</span>`);
+                }
+                rl.push(sl.length > 0 ? sl.join('、') : '');
+            }
+            document.getElementById('termStats').innerHTML = rl.join('<br>') || '暂无统计数据';
+        }
+
+        function checkMappingDuplicates() {
+            const mt = document.getElementById('mapping').value;
+            const wd = document.getElementById('mappingWarning');
+            wd.innerHTML = ''; wd.style.display = 'none';
+            const allTerms = mt.split(/；+/).map(item => { const [k, v] = (item || '').split(/、/).map(s => s.trim()); return { key: k, value: v }; }).filter(t => t.key && t.value);
+            const ks = new Set(), vs = new Set(), dk = [], dv = [];
+            allTerms.forEach(({ key, value }) => {
+                if (ks.has(key)) { if (!dk.includes(key)) dk.push(key); } else ks.add(key);
+                if (vs.has(value)) { if (!dv.includes(value)) dv.push(value); } else vs.add(value);
+            });
+            let wm = '';
+            if (dk.length) wm += `⚠️ 警告：零件标号重复 - ${dk.join(', ')}。<br>`;
+            if (dv.length) wm += `⚠️ 警告：零件名称重复 - ${dv.join(', ')}。`;
+            if (wm) { wd.innerHTML = wm; wd.style.display = 'block'; }
+        }
+
+        document.getElementById('workspace').addEventListener('input', updateTermStats);
+        document.getElementById('mapping').addEventListener('input', () => { updateTermStats(); checkMappingDuplicates(); });
+        updateTermStats(); checkMappingDuplicates();
+    </script>
+
+    <script>
+        // ===== 下拉菜单 & 数字替换 =====
+        (() => {
+            const mapping = document.getElementById('mapping');
+            const workspace = document.getElementById('workspace');
+            const dropdown = document.getElementById('dropdown');
+            const toggleModeBtn = document.getElementById('toggleModeBtn');
+            let isProcessing = false, activeIndex = -1, useBrackets = true;
+            const modeText = document.getElementById('modeText');
+            toggleModeBtn.addEventListener('click', () => {
+                useBrackets = !useBrackets;
+                modeText.textContent = useBrackets ? '现在是写权要，带括号，如西蓝花（11），爽的扣胩' : '现在是写说明书，不带括号模式，如西蓝花11，一般小爽';
+            });
+            const createMapping = () => {
+                const map = {};
+                mapping.value.split('\n').forEach(line => {
+                    line.split(/；+/).filter(i => i.trim()).forEach(item => {
+                        const [key, value] = (item || '').split(/、/).map(s => s.trim());
+                        if (key && value) map[key] = value;
+                    });
+                });
+                return Object.keys(map).sort((a, b) => b.length - a.length).reduce((acc, key) => (acc[key] = map[key], acc), {});
+            };
+            const showDropdown = (options, pos) => {
+                dropdown.innerHTML = ''; activeIndex = 0;
+                options.forEach((opt, i) => { const div = document.createElement('div'); div.className = 'dropdown-item'; div.textContent = opt; div.addEventListener('click', () => insertOption(opt)); if (i === activeIndex) div.classList.add('active'); dropdown.appendChild(div); });
+                dropdown.style.left = (pos.x + window.scrollX) + 'px';
+                dropdown.style.top = (pos.y + window.scrollY) + 'px';
+                dropdown.style.display = 'block';
+            };
+            const insertOption = (option) => {
+                const cp = workspace.selectionStart;
+                const pre = workspace.value.slice(0, cp);
+                let rl = 0;
+                for (let i = pre.length - 1; i >= 0; i--) { if (/\d/.test(pre[i])) rl++; else break; }
+                workspace.value = pre.slice(0, cp - rl) + option + workspace.value.slice(cp);
+                const np = cp - rl + option.length;
+                workspace.setSelectionRange(np, np);
+                dropdown.style.display = 'none';
+            };
+            workspace.addEventListener('input', function(e) {
+                if (isProcessing) return;
+                isProcessing = true;
+                const cp = this.selectionStart;
+                const pre = this.value.slice(0, cp);
+                let numStr = '';
+                for (let i = pre.length - 1; i >= 0; i--) { if (/\d/.test(pre[i])) numStr = pre[i] + numStr; else break; }
+                if (numStr) {
+                    const mappings = createMapping();
+                    const options = Object.keys(mappings).filter(k => k.startsWith(numStr)).map(k => useBrackets ? `${mappings[k]}（${k}）` : `${mappings[k]}${k}`);
+                    if (options.length) { const pos = getCursorPosition(workspace); showDropdown(options, pos); } else dropdown.style.display = 'none';
+                } else dropdown.style.display = 'none';
+                isProcessing = false;
+            });
+            const getCursorPosition = (input) => {
+                const start = input.selectionStart;
+                const cs = getComputedStyle(input);
+                const div = document.createElement('div');
+                for (const p of cs) div.style[p] = cs[p];
+                div.style.position = 'absolute'; div.style.left = '-9999px'; div.style.top = '0';
+                div.style.overflow = 'auto'; div.style.visibility = 'hidden';
+                div.style.whiteSpace = 'pre-wrap'; div.style.wordWrap = 'break-word';
+                div.style.width = input.clientWidth + 'px'; div.style.height = input.clientHeight + 'px';
+                div.textContent = input.value.substr(0, start);
+                if (input.value[start] === '\n') div.appendChild(document.createElement('br'));
+                const span = document.createElement('span');
+                span.textContent = input.value.substr(start) || '.';
+                div.appendChild(span);
+                document.body.appendChild(div);
+                div.scrollTop = input.scrollTop; div.scrollLeft = input.scrollLeft;
+                const dr = div.getBoundingClientRect(), sr = span.getBoundingClientRect();
+                document.body.removeChild(div);
+                const ir = input.getBoundingClientRect();
+                return { x: ir.left + (sr.left - dr.left), y: ir.top + (sr.top - dr.top) + parseFloat(cs.fontSize) };
+            };
+            workspace.addEventListener('keydown', function(e) {
+                if (dropdown.style.display === 'block') {
+                    const items = dropdown.querySelectorAll('.dropdown-item');
+                    switch (e.key) {
+                        case 'ArrowDown': activeIndex = (activeIndex + 1) % items.length; break;
+                        case 'ArrowUp': activeIndex = (activeIndex - 1 + items.length) % items.length; break;
+                        case ' ': case 'Enter':
+                            if (activeIndex >= 0) { insertOption(items[activeIndex].textContent); e.preventDefault(); } break;
+                    }
+                    items.forEach((it, i) => it.classList.toggle('active', i === activeIndex));
+                }
+            });
+            workspace.addEventListener('scroll', () => { if (dropdown.style.display === 'block') dropdown.style.display = 'none'; });
+            workspace.addEventListener('blur', () => setTimeout(() => { dropdown.style.display = 'none'; }, 100));
+        })();
+    </script>
+
+    <script>
+        function changeTheme(theme) { document.body.className = theme; }
+        function changeFont(ff) {
+            document.body.style.fontFamily = ff;
+            document.querySelectorAll('textarea').forEach(t => t.style.fontFamily = ff);
+            const s = document.getElementById('termStats'); if (s) s.style.fontFamily = ff;
+            const t = document.getElementById('saveToast'); if (t) t.style.fontFamily = ff;
+            localStorage.setItem('KT_USER_FONT', ff);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const sf = localStorage.getItem('KT_USER_FONT');
+            if (sf) {
+                document.body.style.fontFamily = sf;
+                document.querySelectorAll('textarea').forEach(t => t.style.fontFamily = sf);
+                const s = document.getElementById('termStats'); if (s) s.style.fontFamily = sf;
+                const t = document.getElementById('saveToast'); if (t) t.style.fontFamily = sf;
+                const fs = document.getElementById('fontSelect');
+                if (fs) { for (let o of fs.options) { if (o.value === sf) { o.selected = true; break; } } }
+            }
+        });
+    </script>
+
+</body>
+</html>

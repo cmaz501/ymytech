@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>自动标号工具 - 开迈科技 kamaytech</title>
+    <style>
+        /* ===== 共享导航样式 ===== */
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --primary-dark: #6d28d9;
+            --accent: #10b981;
+            --bg: #f8f9fa;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .nav-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .nav-logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ===== 页面标题 ===== */
+        .page-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 40px 0;
+            text-align: center;
+        }
+        .page-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            background: #1f2937;
+            color: #d1d5db;
+            padding: 36px 40px 28px;
+            text-align: center;
+            margin-top: 48px;
+        }
+        .footer-inner { max-width: 1200px; margin: 0 auto; }
+        .footer-brand { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
+        .footer-slogan { color: #9ca3af; font-size: 13px; margin-bottom: 20px; }
+        .footer-divider { border: none; border-top: 1px solid #374151; margin: 20px 0; }
+        .footer-copy { font-size: 13px; color: #6b7280; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 13px; }
+            .page-header { padding: 16px 16px 0; }
+        }
+
+        /* ===== 工具原有样式 ===== */
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f3f5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background-color: #12b7f5;
+            background-image: -webkit-linear-gradient(45deg, rgba(255,93,143,1) 25%, transparent 25%, transparent 50%, rgba(255,93,143,1) 50%, rgba(255,93,143,1) 75%, transparent 75%, transparent);
+            transition: background-color 0.2s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover { background-color: #409eff; }
+
+        .container {
+            max-width: 1000px;
+            width: 95%;
+            margin: 20px auto;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            background-color: #fff;
+            color: #303133;
+        }
+
+        .tit {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+        .tit-main { color: #1f2f3d; font-weight: 500; font-size: 24px; margin-bottom: 8px; }
+        .tit-slogan { color: #6c757d; font-size: 14px; line-height: 1.6; font-weight: 400; }
+        .tit-slogan.en { color: #86909c; font-size: 13px; margin-top: 4px; }
+
+        .tit2 { margin: 20px 0 8px; color: #212529; font-weight: 500; font-size: 16px; }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px 15px;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        textarea:focus { border-color: #409eff; box-shadow: 0 0 0 3px rgba(64,158,255,0.1); }
+        textarea::placeholder { color: #adb5bd; font-size: 13px; }
+        textarea.long { min-height: 180px !important; }
+
+        .btn-wrap { text-align: center; margin: 25px 0; }
+        button {
+            background-color: #409eff;
+            border: 1px solid #409eff;
+            color: #fff;
+            cursor: pointer;
+            line-height: 1;
+            white-space: nowrap;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            user-select: none;
+            padding: 12px 30px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+        button:hover { background: #66b1ff; border-color: #66b1ff; transform: translateY(-1px); }
+        button:active { transform: translateY(0); background: #3399ff; border-color: #3399ff; }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; max-width: 100%; }
+            .tit-main { font-size: 20px; }
+            .tit { margin-bottom: 20px; padding-bottom: 15px; }
+            button { padding: 10px 24px; font-size: 13px; }
+            textarea { min-height: 80px; padding: 10px 12px; font-size: 13px; }
+            textarea.long { min-height: 150px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo">
+                <div class="nav-logo-icon">K</div>
+                <span class="nav-logo-text">开迈科技</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt583同步撰写.html">专利撰写</a></li>
+                <li><a href="kt21加数字标号.html" class="active">自动标号</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h2>🔢 自动加标号工具 KT21</h2>
+        <p>一键批量替换 — 同时生成说明书格式和权利要求书格式</p>
+    </div>
+
+    <div class="container">
+        <div class="tit">
+            <div class="tit-main">文本加标号（数字/括号版）</div>
+            <div class="tit-slogan">开拓新路线，迈向新格局</div>
+            <div class="tit-slogan en">Explore new routes and move towards a new pattern</div>
+        </div>
+
+        <div class="tit2">待替换内容：</div>
+        <textarea id="contenting" class="long" placeholder="请输入需要添加标号的原始文本"></textarea>
+
+        <div class="tit2">标号内容：</div>
+        <textarea placeholder="例子（只支持中文模式下的顿号分割）：1、盒体；2、维护装置；201、外壳；202、控制杆" id="grade"></textarea>
+
+        <div class="btn-wrap">
+            <button id="btn">一键替换</button>
+        </div>
+
+        <div class="tit2">说明书替换结果（加数字）：</div>
+        <textarea id="resultNumber" class="long" placeholder="替换后：盒体1、维护装置2..."></textarea>
+
+        <div class="tit2">权利要求替换结果（加数字和括号）：</div>
+        <textarea id="resultBracket" class="long" placeholder="替换后：盒体（1）、维护装置（2）..."></textarea>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">开迈科技 kamaytech</div>
+            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+        </div>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const contenting = document.getElementById('contenting');
+        const grade = document.getElementById('grade');
+        const resultNumber = document.getElementById('resultNumber');
+        const resultBracket = document.getElementById('resultBracket');
+
+        btn.onclick = function() {
+            console.time("执行耗时：");
+
+            let rawText = contenting.value.trim();
+            if (!rawText) { resultNumber.value = ""; resultBracket.value = ""; alert("请输入待替换的原始文本！"); return; }
+
+            let gradeText = grade.value.replace(/;/g, '；').trim();
+            if (!gradeText) { resultNumber.value = ""; resultBracket.value = ""; alert("请输入标号内容！"); return; }
+
+            let gradeArr = gradeText.split("；").filter(s => s && s.trim());
+            let gradeMap = {};
+            for (let item of gradeArr) {
+                let [num, text] = item.split("、");
+                if (num && text) gradeMap[text] = num;
+            }
+
+            let resultNum = rawText;
+            let resultBra = rawText;
+            for (let [text, num] of Object.entries(gradeMap)) {
+                let regNum = new RegExp(text, "g");
+                resultNum = resultNum.replace(regNum, `${text}${num}`);
+                let regBra = new RegExp(text, "g");
+                resultBra = resultBra.replace(regBra, `${text}（${num}）`);
+            }
+
+            resultNumber.value = resultNum;
+            resultBracket.value = resultBra;
+
+            console.timeEnd("执行耗时：");
+        };
+    </script>
+
+</body>
+</html>
