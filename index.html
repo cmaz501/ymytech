@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,357 +8,180 @@
         :root {
             --primary: #7c3aed;
             --primary-light: #8b5cf6;
-            --primary-dark: #6d28d9;
             --accent: #10b981;
-            --accent-light: #34d399;
             --bg: #f8f9fa;
-            --card-bg: #ffffff;
             --text: #1f2937;
             --text-secondary: #6b7280;
             --border: #e5e7eb;
-            --shadow: 0 4px 24px rgba(0,0,0,0.08);
-            --shadow-hover: 0 8px 32px rgba(0,0,0,0.12);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.7;
+            line-height: 1.8;
             -webkit-font-smoothing: antialiased;
         }
-
-        /* ===== 顶部导航 ===== */
+        /* ===== 导航 ===== */
         .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
             background: rgba(255,255,255,0.92);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
-            padding: 0 40px;
+            padding: 0 48px;
         }
         .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
+            max-width: 1500px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 72px;
         }
         .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text);
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: var(--text);
         }
         .nav-logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 44px; height: 44px;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 22px; font-weight: 700;
         }
         .nav-logo-text {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            list-style: none;
-            align-items: center;
-        }
+        .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
         .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
-            position: relative;
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 16px; font-weight: 500; transition: color 0.2s; position: relative;
         }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--primary);
-        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
         .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
+            content: ''; position: absolute; bottom: -6px; left: 0; right: 0;
+            height: 2px; background: var(--primary); border-radius: 2px;
         }
-
-        /* ===== Hero 区域 ===== */
+        /* ===== Hero ===== */
         .hero {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 40px;
+            max-width: 1500px; margin: 0 auto;
+            padding: 100px 48px 80px;
             text-align: center;
         }
         .hero-badge {
             display: inline-block;
             background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.1));
             color: var(--primary);
-            padding: 6px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 24px;
+            padding: 8px 24px; border-radius: 24px;
+            font-size: 16px; font-weight: 500;
+            margin-bottom: 32px;
         }
         .hero h1 {
-            font-size: 48px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
+            font-size: 60px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 20px;
             background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .hero h1 .highlight {
             background: linear-gradient(135deg, var(--primary), #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .hero-subtitle {
-            font-size: 18px;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 32px;
+            font-size: 20px; color: var(--text-secondary);
+            max-width: 720px; margin: 0 auto 40px; line-height: 1.8;
         }
-        .hero-cta {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+        .hero-cta { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .btn {
-            padding: 12px 32px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-            border: none;
-            display: inline-block;
+            padding: 14px 40px; border-radius: 10px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            text-decoration: none; transition: all 0.2s; border: none; display: inline-block;
         }
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            box-shadow: 0 4px 16px rgba(124,58,237,0.3);
+            color: white; box-shadow: 0 4px 20px rgba(124,58,237,0.3);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(124,58,237,0.4);
+            box-shadow: 0 8px 30px rgba(124,58,237,0.4);
         }
         .btn-outline {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
+            background: white; color: var(--primary); border: 2px solid var(--primary);
         }
         .btn-outline:hover {
-            background: rgba(124,58,237,0.05);
-            transform: translateY(-2px);
+            background: rgba(124,58,237,0.05); transform: translateY(-2px);
         }
-
-        /* ===== 产品卡片区域 ===== */
-        .section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 40px 80px;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-        .section-header h2 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .section-header p {
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
+        /* ===== 产品卡片 ===== */
+        .section { max-width: 1500px; margin: 0 auto; padding: 0 48px 96px; }
+        .section-header { text-align: center; margin-bottom: 56px; }
+        .section-header h2 { font-size: 38px; font-weight: 700; margin-bottom: 16px; }
+        .section-header p { color: var(--text-secondary); font-size: 18px; }
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
         }
         .tool-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 32px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            position: relative;
-            overflow: hidden;
-        }
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            background: white; border-radius: 20px; padding: 40px 36px;
+            border: 1px solid var(--border); transition: all 0.3s ease;
+            text-decoration: none; color: inherit; display: block;
+            position: relative; overflow: hidden;
         }
         .tool-card:hover {
-            box-shadow: var(--shadow-hover);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.1);
             transform: translateY(-4px);
             border-color: transparent;
         }
-        .tool-card:hover::before {
-            transform: scaleX(1);
-        }
         .tool-card-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 20px;
+            width: 64px; height: 64px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; margin-bottom: 24px;
         }
-        .tool-card-icon.purple {
-            background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.12));
-            color: var(--primary);
-        }
-        .tool-card-icon.green {
-            background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.12));
-            color: var(--accent);
-        }
-        .tool-card-icon.blue {
-            background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(96,165,250,0.12));
-            color: #3b82f6;
-        }
-        .tool-card-icon.red {
-            background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(248,113,113,0.12));
-            color: #ef4444;
-        }
-        .tool-card-icon.orange {
-            background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(251,146,60,0.12));
-            color: #f97316;
-        }
-        .tool-card-icon.teal {
-            background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(45,212,191,0.12));
-            color: #14b8a6;
-        }
-        .tool-card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .tool-card p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
-        }
+        .tool-card-icon.purple { background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.12)); color: var(--primary); }
+        .tool-card-icon.green { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.12)); color: var(--accent); }
+        .tool-card-icon.blue { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(96,165,250,0.12)); color: #3b82f6; }
+        .tool-card-icon.red { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(248,113,113,0.12)); color: #ef4444; }
+        .tool-card-icon.orange { background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(251,146,60,0.12)); color: #f97316; }
+        .tool-card-icon.teal { background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(45,212,191,0.12)); color: #14b8a6; }
+        .tool-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+        .tool-card p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; }
         .tool-card .tag {
-            display: inline-block;
-            margin-top: 16px;
-            padding: 4px 12px;
-            background: rgba(124,58,237,0.08);
-            color: var(--primary);
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
+            display: inline-block; margin-top: 20px; padding: 6px 16px;
+            background: rgba(124,58,237,0.08); color: var(--primary);
+            border-radius: 8px; font-size: 13px; font-weight: 500;
         }
-
-        /* ===== 特性区域 ===== */
+        /* ===== 特性 ===== */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
         }
         .feature-item {
-            text-align: center;
-            padding: 28px 20px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            text-align: center; padding: 36px 28px;
+            background: white; border-radius: 16px; border: 1px solid var(--border);
             transition: box-shadow 0.3s;
         }
-        .feature-item:hover {
-            box-shadow: var(--shadow);
-        }
-        .feature-icon {
-            font-size: 36px;
-            margin-bottom: 16px;
-        }
-        .feature-item h4 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .feature-item p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* ===== 底部 ===== */
+        .feature-item:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        .feature-icon { font-size: 42px; margin-bottom: 20px; }
+        .feature-item h4 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        .feature-item p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        /* ===== Footer ===== */
         .footer {
-            background: #1f2937;
-            color: #d1d5db;
-            padding: 48px 40px 32px;
-            text-align: center;
+            background: #1f2937; color: #d1d5db;
+            padding: 56px 48px 40px; text-align: center;
         }
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .footer-brand {
-            font-size: 22px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 8px;
-        }
-        .footer-slogan {
-            color: #9ca3af;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .footer-divider {
-            border: none;
-            border-top: 1px solid #374151;
-            margin: 24px 0;
-        }
-        .footer-copy {
-            font-size: 13px;
-            color: #6b7280;
-        }
-
+        .footer-inner { max-width: 1500px; margin: 0 auto; }
+        .footer-brand { font-size: 24px; font-weight: 700; color: white; margin-bottom: 10px; }
+        .footer-slogan { color: #9ca3af; font-size: 15px; margin-bottom: 28px; }
+        .footer-divider { border: none; border-top: 1px solid #374151; margin: 28px 0; }
+        .footer-copy { font-size: 14px; color: #6b7280; }
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
-            .hero { padding: 48px 20px; }
-            .hero h1 { font-size: 32px; }
-            .section { padding: 0 20px 48px; }
-            .navbar { padding: 0 16px; }
+            .hero { padding: 60px 20px; }
+            .hero h1 { font-size: 36px; }
+            .hero-subtitle { font-size: 16px; }
+            .section { padding: 0 20px 60px; }
+            .navbar { padding: 0 20px; }
             .nav-links { gap: 16px; }
             .nav-links a { font-size: 13px; }
             .tools-grid { grid-template-columns: 1fr; }
@@ -367,8 +190,6 @@
     </style>
 </head>
 <body>
-
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-inner">
             <a href="index.html" class="nav-logo">
@@ -387,7 +208,6 @@
         </div>
     </nav>
 
-    <!-- Hero -->
     <section class="hero">
         <div class="hero-badge">🚀 专利代理人的效率利器</div>
         <h1>开拓新路线，<span class="highlight">迈向新格局</span></h1>
@@ -401,7 +221,6 @@
         </div>
     </section>
 
-    <!-- 产品工具区 -->
     <section class="section">
         <div class="section-header">
             <h2>🛠️ 效率工具集</h2>
@@ -417,7 +236,7 @@
             <a href="tools/kt2-自动标号-auto-number.html" class="tool-card">
                 <div class="tool-card-icon green">🔢</div>
                 <h3>自动加标号工具 KT2</h3>
-                <p>一键批量替换——输入原始文本与标号规则，同时生成说明书格式（数字）和权利要求书格式（括号+数字），省去手动标号的繁琐。</p>
+                <p>一键批量替换——输入原始文本与标号规则，同时生成说明书格式和权利要求书格式，省去手动标号的繁琐。</p>
                 <span class="tag">批量处理</span>
             </a>
             <a href="tools/kt3-附图提取-figure-extract.html" class="tool-card">
@@ -447,7 +266,6 @@
         </div>
     </section>
 
-    <!-- 特性 -->
     <section class="section">
         <div class="section-header">
             <h2>✨ 为什么选择开迈</h2>
@@ -487,17 +305,13 @@
         </div>
     </section>
 
-    <!-- 底部 -->
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">开迈科技 kamaytech</div>
             <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
             <hr class="footer-divider">
-            <div class="footer-copy">
-                © 2025 开迈科技 kamaytech by cmaz501 &nbsp;|&nbsp; 专利文案撰写效率工具
-            </div>
+            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
         </div>
     </footer>
-
 </body>
 </html>

@@ -1,133 +1,116 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI提示词库 - 开迈科技 kamaytech</title>
-    <style>
-        :root {
-            --primary: #7c3aed; --primary-light: #8b5cf6; --accent: #10b981;
-            --bg: #f8f9fa; --text: #1f2937; --text-secondary: #6b7280; --border: #e5e7eb;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI提示词库 - 开迈科技 kamaytech</title>
+<style>
+:root { --primary:#7c3aed; --primary-light:#8b5cf6; --accent:#10b981; --bg:#f8f9fa; --text:#1f2937; --text-secondary:#6b7280; --border:#e5e7eb; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; font-size:15px; }
 
-        .navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 40px; }
-        .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
-        .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
-        .nav-logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700; }
-        .nav-logo-text { font-size:20px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
-        .nav-links a { text-decoration:none; color:var(--text-secondary); font-size:15px; font-weight:500; transition:color 0.2s; position:relative; }
-        .nav-links a:hover,.nav-links a.active { color:var(--primary); }
-        .nav-links a.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
+.navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 48px; }
+.nav-inner { max-width:1500px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; }
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
+.nav-logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; }
+.nav-logo-text { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+.nav-links a { text-decoration:none; color:var(--text-secondary); font-size:16px; font-weight:500; transition:color 0.2s; position:relative; }
+.nav-links a:hover,.nav-links a.active { color:var(--primary); }
+.nav-links a.active::after { content:''; position:absolute; bottom:-6px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
 
-        .page-header { max-width:1400px; margin:0 auto; padding:24px 40px 0; text-align:center; }
-        .page-header h2 { font-size:24px; font-weight:700; }
-        .page-header p { color:var(--text-secondary); font-size:14px; margin-top:6px; }
+.page-header { max-width:1500px; margin:0 auto; padding:28px 48px 0; text-align:center; }
+.page-header h2 { font-size:28px; font-weight:700; }
+.page-header p { color:var(--text-secondary); font-size:15px; margin-top:8px; }
 
-        /* 主布局：侧边栏 + 内容 */
-        .main-layout { max-width:1400px; margin:20px auto; padding:0 40px; display:flex; gap:24px; align-items:flex-start; }
-        .sidebar { width:260px; flex-shrink:0; position:sticky; top:84px; max-height:calc(100vh - 100px); overflow-y:auto; background:#fff; border-radius:12px; border:1px solid var(--border); padding:16px; }
-        .sidebar::-webkit-scrollbar { width:4px; }
-        .sidebar::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:2px; }
-        .sidebar .toc-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:6px; }
-        .toc-cat { margin-bottom:4px; }
-        .toc-cat-header { display:flex; align-items:center; gap:4px; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600; color:var(--text); transition:background 0.15s; user-select:none; }
-        .toc-cat-header:hover { background:#f3f4f6; }
-        .toc-cat-header .arrow { font-size:10px; transition:transform 0.2s; width:14px; text-align:center; }
-        .toc-cat-header .arrow.open { transform:rotate(90deg); }
-        .toc-items { overflow:hidden; transition:max-height 0.3s ease; }
-        .toc-item { display:block; padding:4px 8px 4px 28px; font-size:12px; color:var(--text-secondary); text-decoration:none; border-radius:4px; transition:all 0.15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
-        .toc-item:hover { background:#f3f4f6; color:var(--primary); }
-        .toc-item.active { background:rgba(124,58,237,0.08); color:var(--primary); font-weight:600; }
-        .content-area { flex:1; min-width:0; }
-        .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; background:#fff; padding:8px; border-radius:12px; border:1px solid var(--border); }
-        .tab { padding:8px 18px; border-radius:8px; border:none; background:none; cursor:pointer; font-size:13px; font-weight:500; color:var(--text-secondary); transition:all 0.2s; white-space:nowrap; }
-        .tab:hover { background:#f3f4f6; }
-        .tab.active { background:var(--primary); color:#fff; }
+.main-layout { max-width:1500px; margin:24px auto; padding:0 48px; display:flex; gap:28px; align-items:flex-start; }
+/* 左侧目录 */
+.sidebar { width:280px; flex-shrink:0; position:sticky; top:96px; max-height:calc(100vh - 120px); overflow-y:auto; background:#fff; border-radius:16px; border:1px solid var(--border); padding:20px; }
+.sidebar::-webkit-scrollbar { width:5px; }
+.sidebar::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
+.toc-title { font-size:15px; font-weight:700; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.toc-cat { margin-bottom:2px; }
+.toc-cat-header { display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:background 0.15s; user-select:none; }
+.toc-cat-header:hover { background:#f3f4f6; }
+.toc-cat-header .arrow { font-size:10px; transition:transform 0.2s; width:14px; text-align:center; }
+.toc-cat-header .arrow.open { transform:rotate(90deg); }
+.toc-items { overflow:hidden; transition:max-height 0.3s ease; }
+.toc-item { display:block; padding:5px 10px 5px 30px; font-size:13px; color:var(--text-secondary); text-decoration:none; border-radius:6px; transition:all 0.15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+.toc-item:hover { background:#f3f4f6; color:var(--primary); }
+.toc-item.active { background:rgba(124,58,237,0.08); color:var(--primary); font-weight:600; }
 
-        .prompt-card { background:#fff; border-radius:12px; padding:24px; margin-bottom:16px; border:1px solid var(--border); transition:box-shadow 0.2s; }
-        .prompt-card:hover { box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-        .prompt-card h3 { font-size:17px; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
-        .prompt-card .desc { color:var(--text-secondary); font-size:13px; margin-bottom:12px; }
-        .prompt-card .prompt-body { background:#f8f9fa; border-radius:8px; padding:16px; font-size:13px; line-height:1.8; white-space:pre-wrap; word-break:break-all; max-height:300px; overflow-y:auto; font-family:inherit; border:1px solid #e5e7eb; }
-        .prompt-card .prompt-body.expanded { max-height:none; }
-        .card-actions { display:flex; gap:8px; margin-top:12px; align-items:center; }
-        .btn-copy { padding:6px 16px; border-radius:6px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; border:none; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s; }
-        .btn-copy:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(124,58,237,0.3); }
-        .btn-copy.copied { background:var(--accent); }
-        .btn-expand { padding:6px 16px; border-radius:6px; background:none; color:var(--primary); border:1px solid var(--primary); cursor:pointer; font-size:12px; transition:all 0.2s; }
-        .tag-row { display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
-        .tag-item { padding:2px 8px; border-radius:4px; font-size:11px; font-weight:500; background:rgba(124,58,237,0.08); color:var(--primary); }
-        .search-bar { margin-bottom:20px; }
-        .search-bar input { width:100%; padding:12px 16px; border:1px solid var(--border); border-radius:10px; font-size:14px; outline:none; transition:border-color 0.2s; }
-        .search-bar input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
-        .count-bar { font-size:13px; color:var(--text-secondary); margin-bottom:12px; }
-        .empty { text-align:center; padding:60px 20px; color:var(--text-secondary); }
+/* 右侧内容 */
+.content-area { flex:1; min-width:0; }
+.tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; background:#fff; padding:10px; border-radius:14px; border:1px solid var(--border); }
+.tab { padding:8px 18px; border-radius:8px; border:none; background:none; cursor:pointer; font-size:14px; font-weight:500; color:var(--text-secondary); transition:all 0.2s; white-space:nowrap; }
+.tab:hover { background:#f3f4f6; }
+.tab.active { background:var(--primary); color:#fff; }
 
-        .footer { background:#1f2937; color:#d1d5db; padding:36px 40px 28px; text-align:center; margin-top:48px; }
-        .footer-inner { max-width:1200px; margin:0 auto; }
-        .footer-brand { font-size:18px; font-weight:700; color:#fff; margin-bottom:6px; }
-        .footer-slogan { color:#9ca3af; font-size:13px; margin-bottom:20px; }
-        .footer-divider { border:none; border-top:1px solid #374151; margin:20px 0; }
-        .footer-copy { font-size:13px; color:#6b7280; }
+.search-bar { margin-bottom:20px; }
+.search-bar input { width:100%; padding:14px 18px; border:1px solid var(--border); border-radius:12px; font-size:15px; outline:none; transition:border-color 0.2s; }
+.search-bar input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+.count-bar { font-size:14px; color:var(--text-secondary); margin-bottom:16px; }
 
-        @media(max-width:768px){ .navbar{padding:0 16px} .nav-links{gap:16px} .nav-links a{font-size:12px} .main-layout{flex-direction:column;padding:0 16px} .sidebar{width:100%;position:static;max-height:none;margin-bottom:16px} .tabs{gap:4px} .tab{padding:6px 12px;font-size:12px} }
-        @media(max-width:900px){ .sidebar{width:220px} }
-    </style>
+.prompt-card { background:#fff; border-radius:16px; padding:28px; margin-bottom:20px; border:1px solid var(--border); transition:box-shadow 0.2s; }
+.prompt-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.06); }
+.prompt-card h3 { font-size:18px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.prompt-card .desc { color:var(--text-secondary); font-size:14px; margin-bottom:14px; line-height:1.6; }
+.prompt-card .prompt-body { background:#f8f9fa; border-radius:10px; padding:18px; font-size:14px; line-height:1.9; white-space:pre-wrap; word-break:break-word; max-height:350px; overflow-y:auto; border:1px solid #e5e7eb; }
+.prompt-card .prompt-body.expanded { max-height:none; }
+.card-actions { display:flex; gap:10px; margin-top:14px; align-items:center; }
+.btn-copy { padding:8px 20px; border-radius:8px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; border:none; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s; }
+.btn-copy:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(124,58,237,0.3); }
+.btn-copy.copied { background:var(--accent); }
+.btn-expand { padding:8px 20px; border-radius:8px; background:none; color:var(--primary); border:1px solid var(--primary); cursor:pointer; font-size:13px; transition:all 0.2s; }
+.tag-row { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.tag-item { padding:3px 10px; border-radius:5px; font-size:12px; font-weight:500; background:rgba(124,58,237,0.08); color:var(--primary); }
+.empty { text-align:center; padding:80px 20px; color:var(--text-secondary); font-size:16px; }
+
+.footer { background:#1f2937; color:#d1d5db; padding:48px 48px 40px; text-align:center; margin-top:60px; }
+.footer-inner { max-width:1500px; margin:0 auto; }
+.footer-brand { font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; }
+.footer-slogan { color:#9ca3af; font-size:14px; margin-bottom:24px; }
+.footer-divider { border:none; border-top:1px solid #374151; margin:24px 0; }
+.footer-copy { font-size:14px; color:#6b7280; }
+
+@media(max-width:900px){ .main-layout{flex-direction:column} .sidebar{width:100%;position:static;max-height:none} .toc-item{white-space:normal} }
+@media(max-width:768px){ .navbar{padding:0 20px} .nav-links{gap:16px} .nav-links a{font-size:13px} .main-layout{padding:0 20px} .tabs{gap:4px} .tab{padding:6px 12px;font-size:12px} }
+</style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-inner">
-            <a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
-            <ul class="nav-links">
-                <li><a href="../index.html">首页</a></li>
-                <li><a href="kt1-同步撰写-patent-writer.html">专利撰写</a></li>
-                <li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
-                <li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
-                <li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
-                <li><a href="kt5-标记一致性-figure-checker.html">标记一致性</a></li>
-                <li><a href="kt6-提示词库-prompt-library.html" class="active">提示词库</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar"><div class="nav-inner">
+<a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
+<ul class="nav-links">
+<li><a href="../index.html">首页</a></li>
+<li><a href="kt1-同步撰写-patent-writer.html">专利撰写</a></li>
+<li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
+<li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
+<li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
+<li><a href="kt5-标记一致性-figure-checker.html">标记一致性</a></li>
+<li><a href="kt6-提示词库-prompt-library.html" class="active">提示词库</a></li>
+</ul></div></nav>
 
-    <div class="page-header">
-        <h2>📝 专利 AI 提示词库 KT6</h2>
-        <p>收集常用 AI 提示词，涵盖撰写、审查答复、技术挖掘等场景，点击即可复制</p>
-    </div>
+<div class="page-header"><h2>📝 专利 AI 提示词库</h2><p>收集常用 AI 提示词，涵盖撰写、审查答复、技术挖掘等场景，点击即可复制</p></div>
 
-    <div class="main-layout">
-        <!-- 左侧目录导航 -->
-        <aside class="sidebar" id="sidebar">
-            <div class="toc-title">📑 目录导航</div>
-            <div id="tocTree"></div>
-        </aside>
+<div class="main-layout">
+<aside class="sidebar" id="sidebar"><div class="toc-title">📑 目录</div><div id="tocTree"></div></aside>
+<div class="content-area">
+<div class="search-bar"><input type="text" id="searchInput" placeholder="🔍 搜索提示词..." oninput="filterPrompts()"></div>
+<div class="tabs" id="tabBar"></div>
+<div class="count-bar" id="countBar"></div>
+<div id="promptList"></div>
+</div>
+</div>
 
-        <!-- 右侧内容 -->
-        <div class="content-area">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="🔍 搜索提示词..." oninput="filterPrompts()">
-            </div>
-            <div class="tabs" id="tabBar"></div>
-            <div class="count-bar" id="countBar"></div>
-            <div id="promptList"></div>
-        </div>
-    </div>
+<footer class="footer"><div class="footer-inner">
+<div class="footer-brand">开迈科技 kamaytech</div>
+<div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+<hr class="footer-divider"><div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+</div></footer>
 
-    <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-brand">开迈科技 kamaytech</div>
-            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
-            <hr class="footer-divider">
-            <div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
-        </div>
-    </footer>
-
-    <script>
-        const prompts = [
-            { cat:"AI风格设定", title:"豆包通用硬核问答风格", desc:"全程直白、硬核、不啰嗦的回答风格设定", tags:["豆包","风格"], body:`你必须全程固定采用以下回答风格，永久不可更改、不可弱化、不可客套铺垫：
+<script>
+const prompts = [
+{ cat:"AI风格设定", title:"豆包通用硬核问答风格", desc:"全程直白、硬核、不啰嗦的回答风格设定", tags:["豆包","风格"], body:`你必须全程固定采用以下回答风格，永久不可更改、不可弱化、不可客套铺垫：
 全程使用最直白、最现实、不兜圈、硬核爽快、不拖沓、扎心不留余地、一语中的、直截了当、直击要害、零铺垫、零客套、零矫情、不绕路、管用、狠、准、稳、干脆、强势、不来虚的；只输出干货、只抓重点、只给结论、只陈述客观事实，只保留核心关键信息。
 
 硬性执行细则：
@@ -136,16 +119,14 @@
 - 内容只保留核心关键，砍掉冗余拓展、无关铺垫、大段科普废话，分点只给精炼结论。
 - 对错判断直白分明，错误点直接点明，不委婉绕弯；区分客观事实与主观美化描述，只讲真实客观规则。
 - 配套之前法律学习全套排版、标号、图标、复制友好规则同步执行，风格硬核精炼 + 结构清晰不冲突。`},
-
-            { cat:"AI风格设定", title:"豆包客观立场问答", desc:"要求AI完全客观回答，不迎合用户", tags:["豆包","客观","风格"], body:`请以完全客观的立场来回答我的问题，不要有任何迎合的倾向。如果我所说的内容存在错误，必须明确且及时地纠正，要依据事实和准确的知识来进行解答。
+{ cat:"AI风格设定", title:"豆包客观立场问答", desc:"要求AI完全客观回答，不迎合用户", tags:["豆包","客观","风格"], body:`请以完全客观的立场来回答我的问题，不要有任何迎合的倾向。如果我所说的内容存在错误，必须明确且及时地纠正，要依据事实和准确的知识来进行解答。
 
 客观地回应我的每一个问题，不要为了迎合我而给出不准确或片面的答案。若我有错误观点或表述不当之处，务必清晰地指出并说明正确的内容。
 
 以客观、公正、不迎合的态度来回答。对于我所提出的问题，若有错误或不合理的地方，请毫无保留地指出并给予正确的解释和引导。
 
 客观地进行回答，不要因为迎合我而歪曲事实。如果我有错误的认知或表达，要明确纠正并给出合理的依据和解释。`},
-
-            { cat:"法律学习排版", title:"法律学习完整排版提示词", desc:"结构化分层输出+图标+标号+排版规则 完整版", tags:["法律","排版","豆包"], body:`你作为法律学习辅助助手，严格遵守以下所有输出规则，永久生效：
+{ cat:"法律学习排版", title:"法律学习完整排版提示词", desc:"结构化分层输出+图标+标号+排版规则 完整版", tags:["法律","排版","豆包"], body:`你作为法律学习辅助助手，严格遵守以下所有输出规则，永久生效：
 
 一、全局基础约束
 - 全程使用多级结构化分层输出，严格区分一级标题、二级条目、细分小点，禁止大段无分段纯文字堆砌
@@ -185,15 +166,12 @@
 - 复杂法律构成要件用🔍逻辑拆解分层
 - 知识点讲完末尾统一设置🧠速记口诀
 - 存在法条原文的知识点，末尾附📜简化法条原文截取`},
-
-            { cat:"法律学习排版", title:"使用标准Markdown有序表头表格", desc:"Markdown表格专用模板", tags:["法律","排版"], body:`如需表格对比统一用标准Markdown有序表头表格📊，表格内条目同样带细分数字标号，杜绝空白无标注表格。
+{ cat:"法律学习排版", title:"使用标准Markdown有序表头表格", desc:"Markdown表格专用模板", tags:["法律","排版"], body:`如需表格对比统一用标准Markdown有序表头表格📊，表格内条目同样带细分数字标号，杜绝空白无标注表格。
 
 易混淆概念增加⚖对比举例，易踩坑考点增加⚠警示举例，实务场景补充📰真实简化判例举例。`},
-
-            { cat:"专利撰写", title:"基于图纸分析结构和功能", desc:"上传图纸，AI分析具体结构、功能、工作原理", tags:["专利撰写","结构分析"], body:`我需要写一篇专利，名字在上面，帮我根据上面的图片和其他相关材料
+{ cat:"专利撰写", title:"基于图纸分析结构和功能", desc:"上传图纸，AI分析具体结构、功能、工作原理", tags:["专利撰写","结构分析"], body:`我需要写一篇专利，名字在上面，帮我根据上面的图片和其他相关材料
 帮我分析图中的具体结构、功能、整体的工作原理`},
-
-            { cat:"专利撰写", title:"基于现有技术挖掘技术问题", desc:"在现有设备基础上提出可改进的技术问题", tags:["技术挖掘","TRIZ","创造性"], body:`我需要写一篇专利，名字在上面，帮我根据上面的图片和其他相关材料
+{ cat:"专利撰写", title:"基于现有技术挖掘技术问题", desc:"在现有设备基础上提出可改进的技术问题", tags:["技术挖掘","TRIZ","创造性"], body:`我需要写一篇专利，名字在上面，帮我根据上面的图片和其他相关材料
 我希望在这些材料内容的基础上进行改进，在图片中的设备基础上进行改进，我希望你紧密联系图片中的设备，增加改进一些结构，这些结构可以直接指向某些特殊和具体的技术问题
 
 需要满足中国专利制度的新颖性和创造性，同时我希望能提出相对较为特殊和具体的问题，且该问题可以通过机械结构的方式解决，请结合现有技术来对问题挖掘和分析。设置类似的改进拓展，这些问题的基础改进方案至少是我可以在图纸上画出来的机械结构。
@@ -201,76 +179,58 @@
 提出的问题不要太普通，能否结合这些问题提出更加具体和更加特殊的问题，另外我需要体现技术方案的创造性，保证这个技术方案机械结构的复杂性和特殊性
 
 这些问题不够特殊和具体，是否可以从专利创造性的角度，挖掘一些更细节的问题，还是需要保证这些问题可以通过机械结构方案解决`},
-
-            { cat:"专利撰写", title:"仅提出技术问题(v1.0)", desc:"只挖掘可实施的技术问题，不要求写申请内容", tags:["技术挖掘"], body:`不需要你写出完整的专利申请内容，我只需要你提出可实施的技术问题，这个技术问题需要基本通过机械结构解决，这些问题过于普通，能否结合这些问题提出更加具体和更加特殊的问题，另外我需要体现技术方案的创造性，保证这个技术方案机械结构的特殊性和创造性
+{ cat:"专利撰写", title:"仅提出技术问题(v1.0)", desc:"只挖掘可实施的技术问题，不要求写申请内容", tags:["技术挖掘"], body:`不需要你写出完整的专利申请内容，我只需要你提出可实施的技术问题，这个技术问题需要基本通过机械结构解决，这些问题过于普通，能否结合这些问题提出更加具体和更加特殊的问题，另外我需要体现技术方案的创造性，保证这个技术方案机械结构的特殊性和创造性
 
 在上述内容的基础上，我需要对上面的装置进行进一步的改进，如何提出一个相对特殊的技术问题，且可以通过机械结构技术方案进行解决，同时技术方案具有专利创造性`},
-
-            { cat:"专利撰写", title:"创造性挖掘+方法发明点(v1.1)", desc:"机械方案基础上添加方法发明点，结合算法和公式", tags:["技术挖掘","方法发明"], body:`我认为创造性不够，机械方案基础上添加方法发明点
+{ cat:"专利撰写", title:"创造性挖掘+方法发明点(v1.1)", desc:"机械方案基础上添加方法发明点，结合算法和公式", tags:["技术挖掘","方法发明"], body:`我认为创造性不够，机械方案基础上添加方法发明点
 帮我对这一部分的内容进行拓展，具体解释如何XXX拓展的内容请紧密联系前面文档中的内容，同时提出的问题，需要相对特殊，能否结合这些问题提出更加具体和更加特殊的问题，另外我需要体现技术方案的创造性，保证这个技术方案特殊性和非显而易见性；必要时，关于XXX需要结合一些算法和公式内容
 
 我想要把这些功能进行融合，变成我这件案子的基础方案，请总结结合这些方案，进行机械结构方向的改造，不要涉及一些算法改进和程序上改进的，保证其具有专利创造性`},
-
-            { cat:"专利撰写", title:"结构功能联动挖掘", desc:"通过结构功能之间的联动挖掘创造性", tags:["联动","创造性"], body:`我们一般通过结构功能之间的联动，在运动过程中实现多个功能，来满足中国专利中的创造性，透镜在调节的过程中，如何实现其他功能，帮我进行挖掘
+{ cat:"专利撰写", title:"结构功能联动挖掘", desc:"通过结构功能之间的联动挖掘创造性", tags:["联动","创造性"], body:`我们一般通过结构功能之间的联动，在运动过程中实现多个功能，来满足中国专利中的创造性，透镜在调节的过程中，如何实现其他功能，帮我进行挖掘
 
 综合前述的内容，形成一个合理且具有新创性的控制方式和控制逻辑，前提当然是基于机械结构`},
-
-            { cat:"专利撰写", title:"技术方案零件名称自命名", desc:"按照专利自命名规则为结构命名", tags:["命名","权利要求"], body:`我这里需要你帮我对结构进行命名，命名方式要按照专利自命名的规则，名称要考虑非必要技术特征，简洁符合权利要求的名称`},
-
-            { cat:"专利撰写", title:"IPC分类号约束方案设计", desc:"方案设计时考虑IPC分类号", tags:["IPC","分类号"], body:`撰写还需要考虑预审分类号和优审分类号的问题，由于我还需要保证撰写的名称和专利方案落入对应的分类号，因此方案的设计还需要考虑IPC分类号的具体内容，请认真考虑`},
-
-            { cat:"权利要求", title:"权利要求布局(10条)", desc:"列出10条权利要求的布局层次", tags:["权利要求","布局"], body:`以上为该专利的附图标记，专利名称是，一种XXX，我需要写10条权利要求，帮我对10条权利要求进行布局，告诉我每个权利要求写什么
+{ cat:"专利撰写", title:"技术方案零件名称自命名", desc:"按照专利自命名规则为结构命名", tags:["命名","权利要求"], body:`我这里需要你帮我对结构进行命名，命名方式要按照专利自命名的规则，名称要考虑非必要技术特征，简洁符合权利要求的名称`},
+{ cat:"专利撰写", title:"IPC分类号约束方案设计", desc:"方案设计时考虑IPC分类号", tags:["IPC","分类号"], body:`撰写还需要考虑预审分类号和优审分类号的问题，由于我还需要保证撰写的名称和专利方案落入对应的分类号，因此方案的设计还需要考虑IPC分类号的具体内容，请认真考虑`},
+{ cat:"权利要求", title:"权利要求布局(10条)", desc:"列出10条权利要求的布局层次", tags:["权利要求","布局"], body:`以上为该专利的附图标记，专利名称是，一种XXX，我需要写10条权利要求，帮我对10条权利要求进行布局，告诉我每个权利要求写什么
 
 写的更简单一点，重点围绕我一开始提出的方案层次
 我要写10条权利要求，帮我列出权利要求布局层次，只用写概述大概每条权利要求写什么就行了，不用写的特别详细，必要的时候用md思维导图`},
-
-            { cat:"权利要求", title:"根据布局写出完整权利要求", desc:"根据布局写出完整权利要求并带标号", tags:["权利要求"], body:`根据布局帮我写出完整的权利要求，中文括号带上标号不要出现空格`},
-
-            { cat:"权利要求", title:"检查权利要求错误", desc:"检查形式错误、公开不充分、创造性不足", tags:["权利要求","检查"], body:`帮我检查错误
+{ cat:"权利要求", title:"根据布局写出完整权利要求", desc:"根据布局写出完整权利要求并带标号", tags:["权利要求"], body:`根据布局帮我写出完整的权利要求，中文括号带上标号不要出现空格`},
+{ cat:"权利要求", title:"检查权利要求错误", desc:"检查形式错误、公开不充分、创造性不足", tags:["权利要求","检查"], body:`帮我检查错误
 1、形式错误
 2、公开不充分
 3、创造性不足`},
-
-            { cat:"权利要求", title:"基于已有权利要求增加隐藏发明点", desc:"在权利要求基础上增加额外结构或控制方法", tags:["权利要求","创造性"], body:`上面这是我写的权利要求，帮我检查我写的权利要求的错漏，另外我认为仅仅这几点发明点，创造性仍然不够，我不会进行图纸改动和标号结构改动，
+{ cat:"权利要求", title:"基于已有权利要求增加隐藏发明点", desc:"在权利要求基础上增加额外结构或控制方法", tags:["权利要求","创造性"], body:`上面这是我写的权利要求，帮我检查我写的权利要求的错漏，另外我认为仅仅这几点发明点，创造性仍然不够，我不会进行图纸改动和标号结构改动，
 帮我基于已有的这些结构，提出一些额外结构或者控制方法类的内容，比如一些联动结构和联动方法步骤，产生一些额外的功能，增加整个技术方案的创造性
 
 帮我分析是否还有技术特征的缺失和技术公开不充分的地方，同时检查其他形式问题
 另外帮我想想剩余的权利要求写什么，用于增加更多的创造性，前提是一定基于你给我的这些权利要求基础上；
 由于我只写10条权利要求，如果有多的内容我可以写到说明书中，后面的审查答复过程中我也可以合并到权利要求中`},
-
-            { cat:"说明书撰写", title:"写实施例开头", desc:"为每个权利要求写实施例开头引子", tags:["实施例","说明书"], body:`只按照我这里撰写的内容，写出每个权利要求的撰写目的，作为具体实施方式中每个权利要求的开头引子，为了、关于、需要说明的是等等这些字眼开头，每段的撰写风格不要一样
+{ cat:"说明书撰写", title:"写实施例开头", desc:"为每个权利要求写实施例开头引子", tags:["实施例","说明书"], body:`只按照我这里撰写的内容，写出每个权利要求的撰写目的，作为具体实施方式中每个权利要求的开头引子，为了、关于、需要说明的是等等这些字眼开头，每段的撰写风格不要一样
 
 不要出现如权利要求所述这种字眼，每段的撰写风格不要完全一样；
 写的相对简洁一点，但是也不要漏掉重点，记得对结构名称进行标号，请认真阅读我的需求，带上标号；
 是让你写开头，不是让你给每个权利要求的方案复述一遍；`},
-
-            { cat:"说明书撰写", title:"写工作原理和有益效果", desc:"总结关键工作原理和有益效果", tags:["工作原理","有益效果"], body:`总结上文关键的工作原理和有益效果，不要过于发散，可以适当推导，但是出现文本中没有出现的内容，记得后续的问题回答带上结构标号，中文括号。
+{ cat:"说明书撰写", title:"写工作原理和有益效果", desc:"总结关键工作原理和有益效果", tags:["工作原理","有益效果"], body:`总结上文关键的工作原理和有益效果，不要过于发散，可以适当推导，但是出现文本中没有出现的内容，记得后续的问题回答带上结构标号，中文括号。
 
 仅以此段的结构写出关键的工作原理和有益效果，写的间接但是切中关键，不要过于发散，可以适当推导，但是出现文本中没有出现的内容，记得后续的问题回答带上结构标号，中文括号。`},
-
-            { cat:"说明书撰写", title:"写背景技术和技术问题", desc:"反向从方案提出背景技术问题", tags:["背景技术"], body:`针对上面的方案反向提出现有技术的技术问题，以下为现有技术的内容，不要把现有技术的技术方案内容与上面的方案内容弄混了，提出的问题有针对性，符合专利撰写方式中的技术方案提出方式
+{ cat:"说明书撰写", title:"写背景技术和技术问题", desc:"反向从方案提出背景技术问题", tags:["背景技术"], body:`针对上面的方案反向提出现有技术的技术问题，以下为现有技术的内容，不要把现有技术的技术方案内容与上面的方案内容弄混了，提出的问题有针对性，符合专利撰写方式中的技术方案提出方式
 
 相对简述的同时，指出关键的核心问题`},
-
-            { cat:"说明书撰写", title:"写背景技术第一段", desc:"仅撰写背景技术第一段介绍", tags:["背景技术"], body:`不考虑对比文件、技术问题和技术方案，仅仅撰写背景技术的第一段，对名称内容进行介绍`},
-
-            { cat:"说明书撰写", title:"总结加工步骤(上位)", desc:"通过上位方式总结方法步骤", tags:["方法","上位"], body:`帮我总结这里的加工步骤，不要出现上面的具体结构，通过专利撰写里面上位的方式总结方法步骤`},
-
-            { cat:"说明书撰写", title:"不要回答我只是保存内容", desc:"仅用会话来保存内容", tags:["保存"], body:`不要回答我，我只是用会话来保存内容`},
-
-            { cat:"审查答复", title:"一审答复生成(带格式)", desc:"根据一审答复格式生成二审答复", tags:["审查答复","OA"], body:`请根据意见陈述书一审答复.docx里面的文本格式并针对二审审查，综合所有文件内容，帮我生成二审答复的内容
+{ cat:"说明书撰写", title:"写背景技术第一段", desc:"仅撰写背景技术第一段介绍", tags:["背景技术"], body:`不考虑对比文件、技术问题和技术方案，仅仅撰写背景技术的第一段，对名称内容进行介绍`},
+{ cat:"说明书撰写", title:"总结加工步骤(上位)", desc:"通过上位方式总结方法步骤", tags:["方法","上位"], body:`帮我总结这里的加工步骤，不要出现上面的具体结构，通过专利撰写里面上位的方式总结方法步骤`},
+{ cat:"说明书撰写", title:"不要回答我只是保存内容", desc:"仅用会话来保存内容", tags:["保存"], body:`不要回答我，我只是用会话来保存内容`},
+{ cat:"审查答复", title:"一审答复生成(带格式)", desc:"根据一审答复格式生成二审答复", tags:["审查答复","OA"], body:`请根据意见陈述书一审答复.docx里面的文本格式并针对二审审查，综合所有文件内容，帮我生成二审答复的内容
 
 分析区别技术特征C和区别技术特征D的内容，按照三步法的方式与一审答复的格式生成相关答复内容
 
 区别特征A与对比文件1进行对比出区别技术特征后，直接通过区别技术特征推出实际解决的技术问题，然后在结合实际解决的技术问题、区别技术特征来论述区别技术特征是否具有非显而易见，有没有得到技术启示，有没有创造性这些按照这个格式进行区别技术特征A的分析，生成内容
 
 通过区别技术特征B推出实际解决的技术问题，然后在结合实际解决的技术问题、区别技术特征来论述区别技术特征B相对于对比文件1-5是否具有非显而易见，有没有得到技术启示，有没有创造性这些按照这个格式进行区别技术特征B的分析，生成内容`},
-
-            { cat:"审查答复", title:"三步法创造性论述", desc:"基于三步法进行创造性论述", tags:["审查答复","三步法"], body:`我这边合并了权利要求的2-6，请给予我合并的内容、几个对比文件、一审通知书，并且基于三步法进行创造性论述，
+{ cat:"审查答复", title:"三步法创造性论述", desc:"基于三步法进行创造性论述", tags:["审查答复","三步法"], body:`我这边合并了权利要求的2-6，请给予我合并的内容、几个对比文件、一审通知书，并且基于三步法进行创造性论述，
 可以适当推导，但是出现原始文本中根本就没有出现的内容
 论证的内容相对丰富，过程有利有据`},
-
-            { cat:"审查答复", title:"审查答复抬头模板", desc:"一审审查答复的标准抬头格式", tags:["审查答复","模板"], body:`尊敬的审查员
+{ cat:"审查答复", title:"审查答复抬头模板", desc:"一审审查答复的标准抬头格式", tags:["审查答复","模板"], body:`尊敬的审查员
 
 首先感谢您对本申请的认真审查，针对您发出的第一次审查意见通知书，申请人在认真阅读上述文件的基础上作出如下答复：
 
@@ -285,42 +245,33 @@
 申请人认为修改后的权利要求1具备专利法第22条第3款规定的创造性；
 本发明修改后的权利要求1请求保护的技术方案与对比文件1相比，其区别特征主要在于：
 ABCDEFG`},
-
-            { cat:"审查答复", title:"审查答复结尾模板", desc:"审查答复的标准结尾格式", tags:["审查答复","模板"], body:`基于上述理由，对比文件1没有公开上述区别技术特征，同时，上述区别特征也不是本领域解决上述技术问题的常用技术手段，即不属于本领域的公知常识。由此可知，现有技术没有给出将上述区别特征应用到对比文件1以解决其存在的技术问题的技术启示，因此对于本领域技术人员来说，权利要求1的技术方案相对于对比文件1、对比文件2和本领域技术人员的公知常识来说是非显而易见的，而且权利要求1的技术方案能够通过……实现……具有有益的技术效果，因此权利要求1具备突出的实质性特点和显著的进步，符合专利法第22条第3款的规定。
+{ cat:"审查答复", title:"审查答复结尾模板", desc:"审查答复的标准结尾格式", tags:["审查答复","模板"], body:`基于上述理由，对比文件1没有公开上述区别技术特征，同时，上述区别特征也不是本领域解决上述技术问题的常用技术手段，即不属于本领域的公知常识。由此可知，现有技术没有给出将上述区别特征应用到对比文件1以解决其存在的技术问题的技术启示，因此对于本领域技术人员来说，权利要求1的技术方案相对于对比文件1、对比文件2和本领域技术人员的公知常识来说是非显而易见的，而且权利要求1的技术方案能够通过……实现……具有有益的技术效果，因此权利要求1具备突出的实质性特点和显著的进步，符合专利法第22条第3款的规定。
 
 综上所述，本申请已符合专利法、专利法实施细则以及审查指南的有关规定，故本申请已符合授权要件，恳请审查员继续审查，望早日授权，如有不当，敬请联系本代理人，并再给一次意见陈述的机会，申请人感激不尽！`},
-
-            { cat:"审查答复", title:"要求审查员对公知常识举证", desc:"引用审查指南要求审查员举证公知常识", tags:["审查答复","公知常识","举证"], body:`上述技术特征几乎构成了权利要求1的全部技术方案，而权利要求1是解决本申请所要解决的技术问题的核心技术方案。
+{ cat:"审查答复", title:"要求审查员对公知常识举证", desc:"引用审查指南要求审查员举证公知常识", tags:["审查答复","公知常识","举证"], body:`上述技术特征几乎构成了权利要求1的全部技术方案，而权利要求1是解决本申请所要解决的技术问题的核心技术方案。
 上述技术特征是本申请的核心发明点，如审查员老师认为均是惯用手段、常规设置，请审查员予以举证。
 
 在《专利审查指南》第二部分第八章第4.10.2.2节规定了审查员对于公知常识的举证规则："审查员在审查意见通知书中引用的本领域的公知常识应当是确凿的，如果申请人对审查员引用的公知常识提出异议，审查员应当能够说明理由或提供相应的证据予以证明。"如果审查员依然坚持认为是公知和容易想到的，请审查员予以举证证明，否则申请人无法信服。`},
-
-            { cat:"审查答复", title:"本领域技术人员定义引用", desc:"引用审查指南中对本领域技术人员的定义", tags:["审查答复","本领域技术人员"], body:`《专利审查指南》第二部分第四章第2.4节指出"发明是否具备创造性，应当基于所属技术领域的技术人员的知识和能力进行评价。所属技术领域的技术人员，也可称为本领域的技术人员，是指一种假设的"人"，假定他知晓申请日或者优先权日之前发明所属技术领域所有的普通技术知识，能够获知该领域中所有的现有技术，并且具有应用该日期之前常规实验手段的能力，但他不具有创造能力。如果所要解决的技术问题能够促使本领域的技术人员在其他技术领域寻找技术手段，他也应具有从该其他技术领域中获知该申请日或优先权日之前的相关现有技术、普通技术知识和常规实验手段的能力"
+{ cat:"审查答复", title:"本领域技术人员定义引用", desc:"引用审查指南中对本领域技术人员的定义", tags:["审查答复","本领域技术人员"], body:`《专利审查指南》第二部分第四章第2.4节指出"发明是否具备创造性，应当基于所属技术领域的技术人员的知识和能力进行评价。所属技术领域的技术人员，也可称为本领域的技术人员，是指一种假设的"人"，假定他知晓申请日或者优先权日之前发明所属技术领域所有的普通技术知识，能够获知该领域中所有的现有技术，并且具有应用该日期之前常规实验手段的能力，但他不具有创造能力。如果所要解决的技术问题能够促使本领域的技术人员在其他技术领域寻找技术手段，他也应具有从该其他技术领域中获知该申请日或优先权日之前的相关现有技术、普通技术知识和常规实验手段的能力"
 
 审查员在审查意见中提供的技术文献中仅公开了……将……推广到……超越《专利审查指南》所指出的"所属技术领域的技术人员"的能力范畴，因此审查员在第一次审查意见中的上述论述不符合《专利审查指南》的规定。`},
-
-            { cat:"审查答复", title:"不能孤立判断区别特征", desc:"引用审查指南要求整体判断", tags:["审查答复","整体判断"], body:`《专利审查指南》第二部分第四章第3.2.1.1判断方法这一小节记载了"在审查中应当客观分析并确定发明实际解决的技术问题。为此，首先应当分析要求保护的发明与最接近的现有技术相比有哪些区别特征，然后根据该区别特征在要求保护的发明中所能达到的技术效果确定发明实际解决的技术问题""对于功能上彼此相互支持、存在相互作用关系的技术特征，应整体上考虑所述技术特征和它们之间的关系在要求保护的发明中所达到的技术效果"；
+{ cat:"审查答复", title:"不能孤立判断区别特征", desc:"引用审查指南要求整体判断", tags:["审查答复","整体判断"], body:`《专利审查指南》第二部分第四章第3.2.1.1判断方法这一小节记载了"在审查中应当客观分析并确定发明实际解决的技术问题。为此，首先应当分析要求保护的发明与最接近的现有技术相比有哪些区别特征，然后根据该区别特征在要求保护的发明中所能达到的技术效果确定发明实际解决的技术问题""对于功能上彼此相互支持、存在相互作用关系的技术特征，应整体上考虑所述技术特征和它们之间的关系在要求保护的发明中所达到的技术效果"；
 
 根据《专利审查指南》规定的审查原则，区别技术特征所要解决的技术问题需要根据所要求的保护的发明中所能达到的技术效果确定，并且对于功能上彼此相互支持、存在相互作用关系的技术特征需要结合判断其在要求保护的发明中所达到的技术效果，不能孤立的判断；
 
 ……是两个彼此相互支持、存在相互作用关系的技术特征，共同解决了……的技术问题。`},
-
-            { cat:"审查答复", title:"带式输送机公知常识反驳示例", desc:"引用词典定义反驳审查员公知常识认定", tags:["审查答复","公知常识"], body:`本领域人员公知的技术知识是"带式输送机是通过输送带运动实现货物连续运输的装卸运输机械。由托辊支承、改向及张紧滚筒将其张紧的输送带，在驱动滚筒藉滚筒与张紧带之间的摩擦力驱动下运动，将输送带上承载的货物运送到卸载地"（《交通大辞典》上海交通大学出版社2005-01）；
+{ cat:"审查答复", title:"带式输送机公知常识反驳示例", desc:"引用词典定义反驳审查员公知常识认定", tags:["审查答复","公知常识"], body:`本领域人员公知的技术知识是"带式输送机是通过输送带运动实现货物连续运输的装卸运输机械。由托辊支承、改向及张紧滚筒将其张紧的输送带，在驱动滚筒藉滚筒与张紧带之间的摩擦力驱动下运动，将输送带上承载的货物运送到卸载地"（《交通大辞典》上海交通大学出版社2005-01）；
 
 结合上述公知常识可以毫无疑问的得出的结论是：对于本领域技术人员来说设置安装结构方便带式输送机的输送带（相当于本申请的输送带41）的运动是本领域技术人员的常规设置，设置安装结构令带式输送机（相当于本申请的输送机构4）进行运动并非是本领域技术人员的常规设置，因此审查员所述设置安装结构以方便输送机构的运动是本领域技术人员的常规设置的论述与实际情况并不相符。`},
-
-            { cat:"其他", title:"做研发材料(技术交底书/立项书)", desc:"根据原稿生成技术交底书和立项书", tags:["研发材料","交底书"], body:`按照原稿的内容，按照技术交底书的格式，帮我生成原稿内容的技术交底
+{ cat:"其他", title:"做研发材料(技术交底书/立项书)", desc:"根据原稿生成技术交底书和立项书", tags:["研发材料","交底书"], body:`按照原稿的内容，按照技术交底书的格式，帮我生成原稿内容的技术交底
 按照原稿的内容，按照立项书的格式，帮我生成原稿内容的立项书`},
-
-            { cat:"其他", title:"基于现有设备图片生成改造示意图", desc:"基于方案生成图像来具象化方案改造思路", tags:["图像生成","改造"], body:`基于这个图片进行现有设备的结构改造，按照上面的这个方案生成图像来具象化方案改造思路`},
-
-            { cat:"其他", title:"约束方案方向(排除高精尖)", desc:"限定方案方向为常规机械结构", tags:["方案约束"], body:`不要涉及非牛顿流体、形状记忆合金、仿生结构这些相对高精尖且不好公开充分的结构内容，而是尽量从常规的多功能、结构功能之间的有效联动，不是仅仅只是减少了动力源这种的，简单结构实现多个功能这种角度去提出问题和方案，重新提出下问题和方案
+{ cat:"其他", title:"基于现有设备图片生成改造示意图", desc:"基于方案生成图像来具象化方案改造思路", tags:["图像生成","改造"], body:`基于这个图片进行现有设备的结构改造，按照上面的这个方案生成图像来具象化方案改造思路`},
+{ cat:"其他", title:"约束方案方向(排除高精尖)", desc:"限定方案方向为常规机械结构", tags:["方案约束"], body:`不要涉及非牛顿流体、形状记忆合金、仿生结构这些相对高精尖且不好公开充分的结构内容，而是尽量从常规的多功能、结构功能之间的有效联动，不是仅仅只是减少了动力源这种的，简单结构实现多个功能这种角度去提出问题和方案，重新提出下问题和方案
 
 你上面提的问题太过于专注机械结构的原理和运作本身了，请更多的结合上述内容，以及对船体的清洁方式和一些更为具体现实的工作内容上，请重新提出问题
 
 但是船体曲面自适应和姿态保持功能这两者的功能相对孤立，没有一些联系结合配合，不好体现专利非显而易见创造性，请引导我进行一些结合改造，体现两者之间的结合互动，或者添加一些结构保证整个方案的创造性`},
-
-            { cat:"专利撰写方法论", title:"专利撰写核心思路(贾哥)", desc:"从技术问题/技术方案/技术效果三方面确定方案", tags:["方法论","撰写思路"], body:`首先，撰写案件的前提需要了解该案件的大致背景，同样撰写案件的顺序，也应当写清背景和技术问题。
+{ cat:"专利撰写方法论", title:"专利撰写核心思路(贾哥)", desc:"从技术问题/技术方案/技术效果三方面确定方案", tags:["方法论","撰写思路"], body:`首先，撰写案件的前提需要了解该案件的大致背景，同样撰写案件的顺序，也应当写清背景和技术问题。
 重点就是确定技术方案，一般来说，要求最多就是个把小时确定技术方案。
 
 确定技术方案，我们会从三个方面来确定：
@@ -350,146 +301,107 @@ ABCDEFG`},
 另外，技术方案的扩充和替换等，技术效果的表达都可以穿插在说明书中，但是完整的工作原理应该写明！
 技术效果的表达一定要细致到位，技术效果不要概括，小的效果该有的要说清楚，接合或配合的效果也要表达清楚，大的或总的效果也要说明白！这方面是重点！
 权利要求撰写，独权应该进行简单上位概括，技术方案完整清楚的表述就行（不要缺比特），从权同样需要完整和清楚；（权利要求不要出现纯粹的功能性限定，以及限定的方案不完整的问题！）。`},
+{ cat:"其他", title:"专利提示词参考网站", desc:"外部参考资源", tags:["参考"], body:`专利提示词参考网站：https://patentprompt.com/`}
+];
 
-            { cat:"其他", title:"专利提示词参考网站", desc:"外部参考资源", tags:["参考"], body:`专利提示词参考网站：https://patentprompt.com/`}
-        ];
+let activeCat='全部',tocCollapsed={};
+const catOrder=['全部','专利撰写','专利撰写方法论','权利要求','说明书撰写','审查答复','AI风格设定','法律学习排版','其他'];
 
-        let activeCat = '全部';
-        let tocCollapsed = {};
-        const catOrder = ['全部','专利撰写','专利撰写方法论','权利要求','说明书撰写','审查答复','AI风格设定','法律学习排版','其他'];
+function renderTOC(){
+const tree=document.getElementById('tocTree');
+const icons={'专利撰写':'✍️','专利撰写方法论':'🧠','权利要求':'📋','说明书撰写':'📄','审查答复':'📨','AI风格设定':'🤖','法律学习排版':'📚','其他':'🔧'};
+const cats={};
+prompts.forEach((p,i)=>{if(!cats[p.cat])cats[p.cat]=[];cats[p.cat].push({title:p.title,id:i});});
+tree.innerHTML=catOrder.filter(c=>c!=='全部'&&cats[c]).map(cat=>{
+const items=cats[cat];
+const collapsed=tocCollapsed[cat]!==false;
+return `<div class="toc-cat">
+<div class="toc-cat-header" onclick="toggleTOC('${cat}')">
+<span class="arrow${collapsed?' open':''}">▶</span>
+<span>${icons[cat]||''} ${cat}</span>
+<span style="color:var(--text-secondary);font-size:12px;margin-left:auto;">${items.length}</span>
+</div>
+<div class="toc-items" style="max-height:${collapsed?items.length*30:0}px">
+${items.map(p=>`<a class="toc-item" data-toc="${p.id}" onclick="scrollToPrompt(${p.id})" title="${p.title}">${p.title}</a>`).join('')}
+</div></div>`;}).join('');
+}
 
-        // ===== 左侧目录树 =====
-        function renderTOC(){
-            const tree = document.getElementById('tocTree');
-            const catIcons = {'专利撰写':'✍️','专利撰写方法论':'🧠','权利要求':'📋','说明书撰写':'📄','审查答复':'📨','AI风格设定':'🤖','法律学习排版':'📚','其他':'🔧'};
-            const cats = {};
-            prompts.forEach((p,i) => { if(!cats[p.cat]) cats[p.cat]=[]; cats[p.cat].push({title:p.title, id:i}); });
+function toggleTOC(cat){tocCollapsed[cat]=!(tocCollapsed[cat]!==false);renderTOC();}
+function scrollToPrompt(id){
+const el=document.getElementById('prompt-'+id);
+if(!el){
+const p=prompts[id];
+if(p&&activeCat!=='全部'&&activeCat!==p.cat){activeCat=p.cat;document.getElementById('searchInput').value='';renderTabs();filterPrompts();}
+setTimeout(()=>{const e2=document.getElementById('prompt-'+id);if(e2)e2.scrollIntoView({behavior:'smooth',block:'start'});},120);
+return;
+}
+el.scrollIntoView({behavior:'smooth',block:'start'});updateActiveTOC(id);
+}
+function updateActiveTOC(id){
+document.querySelectorAll('.toc-item').forEach(el=>el.classList.remove('active'));
+const t=document.querySelector('.toc-item[data-toc="'+id+'"]');
+if(t)t.classList.add('active');
+}
+let scrollTimer;
+window.addEventListener('scroll',()=>{
+clearTimeout(scrollTimer);
+scrollTimer=setTimeout(()=>{
+let bestId=null,bestTop=Infinity;
+document.querySelectorAll('.prompt-card').forEach(card=>{
+const rect=card.getBoundingClientRect();
+if(rect.top>=90&&rect.top<bestTop){bestTop=rect.top;bestId=parseInt(card.dataset.pid);}
+});
+if(bestId!==null)updateActiveTOC(bestId);
+},150);
+},{passive:true});
 
-            tree.innerHTML = catOrder.filter(c=>c!=='全部'&&cats[c]).map(cat => {
-                const items = cats[cat];
-                const collapsed = tocCollapsed[cat] !== false;
-                return `<div class="toc-cat">
-                    <div class="toc-cat-header" onclick="toggleTOC('${cat}')">
-                        <span class="arrow${collapsed?' open':''}">▶</span>
-                        <span>${catIcons[cat]||''} ${cat}</span>
-                        <span style="color:var(--text-secondary);font-size:11px;margin-left:auto;">${items.length}</span>
-                    </div>
-                    <div class="toc-items" style="max-height:${collapsed?items.length*28:0}px">
-                        ${items.map(p => `<a class="toc-item" data-toc="${p.id}" onclick="scrollToPrompt(${p.id})" title="${p.title}">${p.title}</a>`).join('')}
-                    </div>
-                </div>`;
-            }).join('');
-        }
+function renderTabs(){
+const tabBar=document.getElementById('tabBar');
+tabBar.innerHTML=catOrder.map(c=>{
+const count=c==='全部'?prompts.length:prompts.filter(p=>p.cat===c).length;
+return `<button class="tab${activeCat===c?' active':''}" onclick="setCat('${c}')">${c} (${count})</button>`;
+}).join('');
+}
+function setCat(cat){activeCat=cat;renderTabs();filterPrompts();}
+function filterPrompts(){
+const q=document.getElementById('searchInput').value.toLowerCase();
+const filtered=prompts.filter(p=>{
+const m=activeCat==='全部'||p.cat===activeCat;
+const n=!q||p.title.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.body.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q));
+return m&&n;
+});
+document.getElementById('countBar').textContent=`共 ${filtered.length} 条提示词`;
+document.getElementById('promptList').innerHTML=filtered.length===0
+?'<div class="empty">😕 没有匹配的提示词，试试其他关键词</div>'
+:filtered.map((p,i)=>{
+const gid=prompts.indexOf(p);
+return `<div class="prompt-card" id="prompt-${gid}" data-pid="${gid}">
+<h3>${p.title}</h3>
+<p class="desc">${p.desc}</p>
+<div class="tag-row">${p.tags.map(t=>`<span class="tag-item">${t}</span>`).join('')}</div>
+<div class="prompt-body" id="body${i}">${escapeHtml(p.body)}</div>
+<div class="card-actions">
+<button class="btn-copy" id="btn${i}" onclick="copyPrompt(${i})">📋 复制</button>
+<button class="btn-expand" onclick="toggleExpand(${i})">展开/折叠</button>
+</div></div>`;}).join('');
+renderTOC();
+}
+function copyPrompt(i){
+const btn=document.getElementById('btn'+i);
+const body=prompts.filter((p,j)=>{
+const m=activeCat==='全部'||p.cat===activeCat;
+return m;
+})[i];
+if(!body)return;
+navigator.clipboard.writeText(body.body).then(()=>{
+btn.textContent='✅ 已复制';btn.classList.add('copied');
+setTimeout(()=>{btn.textContent='📋 复制';btn.classList.remove('copied');},1500);
+});
+}
+function toggleExpand(i){const el=document.getElementById('body'+i);el.classList.toggle('expanded');}
+function escapeHtml(text){return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-        function toggleTOC(cat){
-            tocCollapsed[cat] = !(tocCollapsed[cat] !== false);
-            renderTOC();
-        }
-
-        function scrollToPrompt(id){
-            const el = document.getElementById('prompt-'+id);
-            if(!el){
-                // Card not visible, switch to its category first
-                const p = prompts[id];
-                if(p && activeCat !== '全部' && activeCat !== p.cat){
-                    activeCat = p.cat;
-                    document.getElementById('searchInput').value = '';
-                    renderTabs();
-                    filterPrompts();
-                }
-                // After re-render, try again
-                setTimeout(()=>{ const e2 = document.getElementById('prompt-'+id); if(e2) e2.scrollIntoView({behavior:'smooth',block:'start'}); },100);
-                return;
-            }
-            el.scrollIntoView({behavior:'smooth',block:'start'});
-            updateActiveTOC(id);
-        }
-
-        function updateActiveTOC(id){
-            document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
-            const target = document.querySelector(`.toc-item[data-toc="${id}"]`);
-            if(target) target.classList.add('active');
-        }
-
-        // Scroll spy
-        let scrollTimer;
-        window.addEventListener('scroll', ()=>{
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(()=>{
-                let bestId = null, bestTop = Infinity;
-                document.querySelectorAll('.prompt-card').forEach(card => {
-                    const rect = card.getBoundingClientRect();
-                    if(rect.top >= 80 && rect.top < bestTop){
-                        bestTop = rect.top;
-                        bestId = parseInt(card.dataset.pid);
-                    }
-                });
-                if(bestId !== null) updateActiveTOC(bestId);
-            }, 150);
-        }, {passive:true});
-
-        function renderTabs(){
-            const tabBar = document.getElementById('tabBar');
-            tabBar.innerHTML = catOrder.map(c => {
-                const count = c==='全部' ? prompts.length : prompts.filter(p=>p.cat===c).length;
-                return `<button class="tab${activeCat===c?' active':''}" onclick="setCat('${c}')">${c} (${count})</button>`;
-            }).join('');
-        }
-
-        function setCat(cat){ activeCat = cat; renderTabs(); filterPrompts(); }
-        function filterPrompts(){
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = prompts.filter(p => {
-                const matchCat = activeCat==='全部' || p.cat===activeCat;
-                const matchQ = !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.body.toLowerCase().includes(q) || p.tags.some(t=>t.toLowerCase().includes(q));
-                return matchCat && matchQ;
-            });
-            document.getElementById('countBar').textContent = `共 ${filtered.length} 条提示词`;
-            document.getElementById('promptList').innerHTML = filtered.length===0
-                ? '<div class="empty">😕 没有匹配的提示词，试试其他关键词</div>'
-                : filtered.map((p,i) => {
-                    const gid = prompts.indexOf(p);
-                    return `
-                <div class="prompt-card" id="prompt-${gid}" data-pid="${gid}">
-                    <h3>${p.title}</h3>
-                    <p class="desc">${p.desc}</p>
-                    <div class="tag-row">${p.tags.map(t=>`<span class="tag-item">${t}</span>`).join('')}</div>
-                    <div class="prompt-body" id="body${i}">${escapeHtml(p.body)}</div>
-                    <div class="card-actions">
-                        <button class="btn-copy" id="btn${i}" onclick="copyPrompt(${i})">📋 复制</button>
-                        <button class="btn-expand" onclick="toggleExpand(${i})">展开/折叠</button>
-                    </div>
-                </div>`}).join('');
-
-            // Rebuild TOC (always shows all prompts)
-            renderTOC();
-        }
-        }
-
-        function copyPrompt(i){
-            const btn = document.getElementById('btn'+i);
-            const body = prompts.filter((p,j)=>{
-                const matchCat = activeCat==='全部' || p.cat===activeCat;
-                return matchCat;
-            })[i];
-            if(!body) return;
-            navigator.clipboard.writeText(body.body).then(()=>{
-                btn.textContent='✅ 已复制'; btn.classList.add('copied');
-                setTimeout(()=>{btn.textContent='📋 复制'; btn.classList.remove('copied');},1500);
-            });
-        }
-
-        function toggleExpand(i){
-            const el = document.getElementById('body'+i);
-            el.classList.toggle('expanded');
-        }
-
-        function escapeHtml(text){
-            return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        }
-
-        renderTabs();
-        filterPrompts();
-    </script>
+renderTabs();filterPrompts();
+</script>
 </body>
 </html>
