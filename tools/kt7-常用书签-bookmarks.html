@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>常用网站书签 - 开迈科技 kamaytech</title>
+<style>
+:root { --primary:#7c3aed; --primary-light:#8b5cf6; --accent:#10b981; --bg:#f8f9fa; --text:#1f2937; --text-secondary:#6b7280; --border:#e5e7eb; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; font-size:15px; }
+
+.navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 48px; }
+.nav-inner { max-width:1500px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; }
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
+.nav-logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; }
+.nav-logo-text { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+.nav-links a { text-decoration:none; color:var(--text-secondary); font-size:16px; font-weight:500; transition:color 0.2s; position:relative; }
+.nav-links a:hover,.nav-links a.active { color:var(--primary); }
+.nav-links a.active::after { content:''; position:absolute; bottom:-6px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
+
+.page-header { max-width:1500px; margin:0 auto; padding:32px 48px 0; text-align:center; }
+.page-header h2 { font-size:28px; font-weight:700; }
+.page-header p { color:var(--text-secondary); font-size:15px; margin-top:8px; }
+
+/* Category tabs */
+.cat-tabs { max-width:1500px; margin:24px auto 0; padding:0 48px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.cat-tab { padding:10px 20px; border-radius:10px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:14px; font-weight:500; color:var(--text-secondary); transition:all 0.2s; }
+.cat-tab:hover { border-color:var(--primary); color:var(--primary); }
+.cat-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+/* Bookmarks grid */
+.bookmark-list { max-width:1500px; margin:28px auto; padding:0 48px 80px; }
+.cat-section { margin-bottom:40px; }
+.cat-title { font-size:20px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:2px solid var(--primary); }
+.cat-title .count { font-size:14px; color:var(--text-secondary); font-weight:400; }
+.bookmark-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:16px; }
+.bookmark-card { background:#fff; border-radius:14px; padding:22px 24px; border:1px solid var(--border); transition:all 0.2s; text-decoration:none; color:inherit; display:flex; gap:16px; align-items:flex-start; }
+.bookmark-card:hover { box-shadow:0 6px 24px rgba(0,0,0,0.08); border-color:var(--primary); transform:translateY(-2px); }
+.bookmark-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.bookmark-icon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
+.bookmark-icon.green { background:rgba(16,185,129,0.1); color:#10b981; }
+.bookmark-icon.orange { background:rgba(249,115,22,0.1); color:#f97316; }
+.bookmark-icon.purple { background:rgba(124,58,237,0.1); color:#7c3aed; }
+.bookmark-icon.red { background:rgba(239,68,68,0.1); color:#ef4444; }
+.bookmark-icon.teal { background:rgba(20,184,166,0.1); color:#14b8a6; }
+.bookmark-info { flex:1; min-width:0; }
+.bookmark-info h4 { font-size:15px; font-weight:600; margin-bottom:4px; }
+.bookmark-info .url { font-size:12px; color:var(--text-secondary); word-break:break-all; margin-bottom:6px; line-height:1.4; }
+.bookmark-info .desc { font-size:13px; color:var(--text-secondary); line-height:1.5; }
+.bookmark-badge { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; white-space:nowrap; }
+.bookmark-badge.gov { background:rgba(59,130,246,0.1); color:#2563eb; }
+.bookmark-badge.search { background:rgba(16,185,129,0.1); color:#059669; }
+.bookmark-badge.intl { background:rgba(249,115,22,0.1); color:#ea580c; }
+.bookmark-badge.tool { background:rgba(124,58,237,0.1); color:#7c3aed; }
+
+/* Search */
+.search-box { max-width:1500px; margin:0 auto; padding:0 48px; }
+.search-box input { width:100%; max-width:600px; margin:0 auto; display:block; padding:14px 18px; border:1px solid var(--border); border-radius:12px; font-size:15px; outline:none; transition:border-color 0.2s; background:#fff; }
+.search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+
+.footer { background:#1f2937; color:#d1d5db; padding:48px 48px 40px; text-align:center; margin-top:60px; }
+.footer-inner { max-width:1500px; margin:0 auto; }
+.footer-brand { font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; }
+.footer-slogan { color:#9ca3af; font-size:14px; margin-bottom:24px; }
+.footer-divider { border:none; border-top:1px solid #374151; margin:24px 0; }
+.footer-copy { font-size:14px; color:#6b7280; }
+
+@media(max-width:768px){ .navbar{padding:0 20px} .nav-links{gap:16px} .nav-links a{font-size:13px} .bookmark-grid{grid-template-columns:1fr} .cat-tabs{padding:0 20px} .bookmark-list{padding:0 20px 60px} .search-box{padding:0 20px} }
+</style>
+</head>
+<body>
+<nav class="navbar"><div class="nav-inner">
+<a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
+<ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt1-同步撰写-patent-writer.html">专利撰写</a></li>
+                <li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
+                <li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
+                <li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
+                <li><a href="kt5-标记一致性-figure-checker.html">标记一致性</a></li>
+                <li><a href="kt6-提示词库-prompt-library.html">提示词库</a></li>
+                <li><a href="kt7-常用书签-bookmarks.html" class="active">常用书签</a></li>
+            </ul></div></nav>
+
+<div class="page-header"><h2>🔗 常用网站书签汇总</h2><p>专利代理人日常工作常用网址，按分类整理，点击直达</p></div>
+
+<div class="search-box"><input type="text" id="searchInput" placeholder="🔍 搜索网站...（支持名称、URL、描述）" oninput="filterBookmarks()"></div>
+
+<div class="cat-tabs" id="catTabs">
+<button class="cat-tab active" onclick="setCat('全部')">全部</button>
+<button class="cat-tab" onclick="setCat('官方/国知局')">🏛️ 官方/国知局</button>
+<button class="cat-tab" onclick="setCat('检索/数据库')">🔍 检索/数据库</button>
+<button class="cat-tab" onclick="setCat('协会/行业')">📋 协会/行业</button>
+<button class="cat-tab" onclick="setCat('法律/法规')">⚖️ 法律/法规</button>
+<button class="cat-tab" onclick="setCat('工具/辅助')">🛠️ 工具/辅助</button>
+<button class="cat-tab" onclick="setCat('国际/海外')">🌍 国际/海外</button>
+</div>
+
+<div class="bookmark-list" id="bookmarkList"></div>
+
+<footer class="footer"><div class="footer-inner">
+<div class="footer-brand">开迈科技 kamaytech</div>
+<div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+<hr class="footer-divider"><div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+</div></footer>
+
+<script>
+const bookmarks = [
+// ===== 官方/国知局 =====
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"专利审查信息查询",url:"http://cpquery.cnipa.gov.cn",desc:"中国及多国专利审查信息查询系统，查案卷状态、审查意见、费用信息"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"专利公布公告",url:"http://epub.sipo.gov.cn",desc:"中国专利公布公告查询，查看已公开专利全文、著录项目、法律状态"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"电子申请网（cponline）",url:"http://cponline.cnipa.gov.cn",desc:"专利电子申请客户端，提交新申请、中间文件、办理手续"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"专利业务办理系统",url:"https://cponline.cnipa.gov.cn/gzfw",desc:"新版专利业务办理统一平台，在线提交、查询、缴费一体"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"代理机构查询",url:"https://ggfw.cnipa.gov.cn/poam//txnqueryAgencyOrg.do",desc:"查询全国专利代理机构信息，机构代码、名称、负责人"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"代理人查询",url:"https://ggfw.cnipa.gov.cn/poam/txnqueryAgent.do",desc:"查询全国专利代理师执业信息，姓名、资格证号、执业机构"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"专利检索及分析系统",url:"http://pss-system.cnipa.gov.cn",desc:"国知局官方专利检索平台，支持中文、英文多字段检索与分析"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"专利费用查询",url:"https://www.cnipa.gov.cn/col/col100/index.html",desc:"专利收费标准、费用减缴政策、年费计算"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"商标查询",url:"http://wcjs.sbj.cnipa.gov.cn",desc:"中国商标网上查询系统，查商标状态、近似、公告"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"IPC分类查询",url:"https://www.cnipa.gov.cn/col/col200/index.html",desc:"国际专利分类（IPC）查询，按分类号查找技术领域"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"复审无效审理",url:"https://www.cnipa.gov.cn/col/col3025/index.html",desc:"专利复审委员会，复审请求、无效宣告、口审公告"},
+{cat:"官方/国知局",icon:"🏛️",color:"blue",badge:"gov",title:"优先权文件交换(DAS)",url:"https://das.cnipa.gov.cn",desc:"优先权文件数字接入服务，电子交换优先权证明文件"},
+
+// ===== 检索/数据库 =====
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"Google Patents",url:"https://patents.google.com",desc:"全球专利全文检索，支持机器翻译，覆盖100+国家/地区"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"佰腾网",url:"https://www.baiten.cn",desc:"国内专利检索平台，支持简单检索/高级检索/语义检索"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"SooPAT",url:"http://www.soopat.com",desc:"专利检索分析工具，支持中文语义检索、图表分析"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"专利之星",url:"http://www.patentstar.com.cn",desc:"专利检索与管理系统，支持分类号导航检索"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"Incopat 全球专利数据库",url:"https://www.incopat.com",desc:"全球专利情报分析平台，深度标引、引证分析、3D专利地图"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"智慧芽 (PatSnap)",url:"https://www.zhihuiya.com",desc:"专利检索、分析、管理全能平台，AI辅助搜索"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"CNKI 专利数据库",url:"https://kns.cnki.net/kns8s/?classid=PNPDMHBW",desc:"知网专利频道，与期刊论文跨库检索"},
+{cat:"检索/数据库",icon:"🔍",color:"green",badge:"search",title:"润桐 RainPat",url:"https://www.rainpat.com",desc:"免费专利检索分析，支持多国专利检索"},
+
+// ===== 协会/行业 =====
+{cat:"协会/行业",icon:"📋",color:"orange",badge:"tool",title:"中华全国专利代理师协会",url:"http://www.acpaa.cn",desc:"专利代理师协会官网，会员管理、教育培训、行业自律"},
+{cat:"协会/行业",icon:"📋",color:"orange",badge:"tool",title:"协会公告公示",url:"http://www.acpaa.cn/front/announcement/list.jhtml?agencyID=&company={keyword}&batch=",desc:"代理机构精准服务保障名单公示，按地区/批次查询"},
+{cat:"协会/行业",icon:"📋",color:"orange",badge:"tool",title:"全国专利代理公共服务平台",url:"https://dlgl.cnipa.gov.cn",desc:"专利代理机构及代理师公示、执业备案、考核信息"},
+{cat:"协会/行业",icon:"📋",color:"orange",badge:"tool",title:"协会远程教育",url:"http://ycjy.acpaa.cn",desc:"专利代理师远程教育培训平台，在线课程、继续教育"},
+
+// ===== 法律/法规 =====
+{cat:"法律/法规",icon:"⚖️",color:"red",badge:"gov",title:"专利法及实施细则",url:"https://www.cnipa.gov.cn/col/col98/index.html",desc:"现行《专利法》、《专利法实施细则》全文"},
+{cat:"法律/法规",icon:"⚖️",color:"red",badge:"gov",title:"专利审查指南（2023）",url:"https://www.cnipa.gov.cn/col/col2948/index.html",desc:"最新版专利审查指南全文，实质审查、复审无效等章节"},
+{cat:"法律/法规",icon:"⚖️",color:"red",badge:"gov",title:"知识产权相关法律法规",url:"https://www.cnipa.gov.cn/col/col96/index.html",desc:"商标法、著作权法、反不正当竞争法等知识产权法规"},
+{cat:"法律/法规",icon:"⚖️",color:"red",badge:"gov",title:"最高人民法院知识产权法庭",url:"https://ipc.court.gov.cn",desc:"最高法知识产权庭裁判文书、典型案例、司法解释"},
+{cat:"法律/法规",icon:"⚖️",color:"red",badge:"gov",title:"中国裁判文书网",url:"https://wenshu.court.gov.cn",desc:"全国法院裁判文书公开查询，检索专利侵权判例"},
+
+// ===== 工具/辅助 =====
+{cat:"工具/辅助",icon:"🛠️",color:"purple",badge:"tool",title:"申请前查询工具",url:"https://ggfw.cnipa.gov.cn/psservice/apps/apps/appTool/gjfx/index.html?appType=preSearch",desc:"国知局预检索工具，申请前评估新颖性/创造性"},
+{cat:"工具/辅助",icon:"🛠️",color:"purple",badge:"tool",title:"专利代理管理系统",url:"https://dlgl.cnipa.gov.cn",desc:"代理机构及代理师执业管理，备案变更、考核评价"},
+{cat:"工具/辅助",icon:"🛠️",color:"purple",badge:"tool",title:"专利号校验工具",url:"https://ggfw.cnipa.gov.cn/patent/cn/patentNumberVerify.jsp",desc:"校验中国专利号/申请号格式是否正确"},
+{cat:"工具/辅助",icon:"🛠️",color:"purple",badge:"tool",title:"中国信息公开查询",url:"http://credit.cnipa.gov.cn",desc:"专利代理机构/代理师信用信息公示"},
+{cat:"工具/辅助",icon:"🛠️",color:"purple",badge:"tool",title:"费减备案系统",url:"https://cponline.cnipa.gov.cn/gzfw",desc:"办理专利费用减缴资格备案"},
+
+// ===== 国际/海外 =====
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"WIPO Patentscope",url:"https://patentscope.wipo.int",desc:"世界知识产权组织专利检索，PCT申请全文查询"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"Espacenet (欧专局)",url:"https://worldwide.espacenet.com",desc:"欧洲专利局全球专利数据库，覆盖100+国家/地区"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"USPTO 美国专利",url:"https://www.uspto.gov/patents/search",desc:"美国专利商标局专利检索系统"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"J-PlatPat 日本专利",url:"https://www.j-platpat.inpit.go.jp",desc:"日本专利检索平台（日文/英文界面）"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"KIPRIS 韩国专利",url:"http://eng.kipris.or.kr",desc:"韩国知识产权信息检索系统（英文界面）"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"EPO European Patent Register",url:"https://register.epo.org",desc:"欧洲专利登记簿，查EP申请审查状态"},
+{cat:"国际/海外",icon:"🌍",color:"teal",badge:"intl",title:"PCT申请提交(ePCT)",url:"https://pct.wipo.int/ePCT",desc:"PCT电子申请系统，在线提交国际申请"},
+];
+
+let activeCat = '全部';
+
+function renderBookmarks(filtered) {
+    const container = document.getElementById('bookmarkList');
+    if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--text-secondary);font-size:16px;">😕 没有找到匹配的网站</div>';
+        return;
+    }
+    const cats = activeCat === '全部'
+        ? ['官方/国知局','检索/数据库','协会/行业','法律/法规','工具/辅助','国际/海外']
+        : [activeCat];
+    let html = '';
+    cats.forEach(cat => {
+        const items = filtered.filter(b => b.cat === cat);
+        if (items.length === 0) return;
+        html += `<div class="cat-section">
+            <div class="cat-title">${items[0].icon} ${cat} <span class="count">（${items.length}个）</span></div>
+            <div class="bookmark-grid">`;
+        items.forEach(b => {
+            html += `<a href="${b.url}" target="_blank" rel="noopener" class="bookmark-card">
+                <div class="bookmark-icon ${b.color}">${b.icon}</div>
+                <div class="bookmark-info">
+                    <h4>${b.title} <span class="bookmark-badge ${b.badge}">${b.badge.toUpperCase()}</span></h4>
+                    <div class="url">${b.url}</div>
+                    <div class="desc">${b.desc}</div>
+                </div>
+            </a>`;
+        });
+        html += '</div></div>';
+    });
+    container.innerHTML = html;
+}
+
+function setCat(cat) {
+    activeCat = cat;
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    filterBookmarks();
+}
+
+function filterBookmarks() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = bookmarks;
+    if (activeCat !== '全部') {
+        filtered = filtered.filter(b => b.cat === activeCat);
+    }
+    if (q) {
+        filtered = filtered.filter(b =>
+            b.title.toLowerCase().includes(q) ||
+            b.url.toLowerCase().includes(q) ||
+            b.desc.toLowerCase().includes(q) ||
+            b.cat.toLowerCase().includes(q)
+        );
+    }
+    renderBookmarks(filtered);
+}
+
+renderBookmarks(bookmarks);
+</script>
+</body>
+</html>
