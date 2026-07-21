@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>常用网站书签 KT8 - 开迈科技 kamaytech</title>
+<style>
+:root { --primary:#7c3aed; --primary-light:#8b5cf6; --accent:#10b981; --bg:#f8f9fa; --text:#1f2937; --text2:#6b7280; --border:#e5e7eb; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:15px; }
+
+/* Nav */
+.navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 48px; }
+.nav-inner { max-width:1500px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; }
+.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
+.nav-logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; }
+.nav-logo-text { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+.nav-links a { text-decoration:none; color:var(--text2); font-size:16px; font-weight:500; transition:color 0.2s; position:relative; }
+.nav-links a:hover,.nav-links a.active { color:var(--primary); }
+.nav-links a.active::after { content:''; position:absolute; bottom:-6px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
+
+/* Header */
+.page-header { max-width:1500px; margin:0 auto; padding:32px 48px 0; text-align:center; }
+.page-header h2 { font-size:28px; font-weight:700; }
+.page-header p { color:var(--text2); font-size:15px; margin-top:8px; }
+
+/* View toggle */
+.view-toolbar { max-width:1500px; margin:20px auto 0; padding:0 48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.view-tabs { display:flex; gap:6px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:4px; }
+.view-tab { padding:8px 18px; border-radius:8px; border:none; background:transparent; cursor:pointer; font-size:14px; font-weight:500; color:var(--text2); transition:all 0.2s; }
+.view-tab:hover { color:var(--primary); background:rgba(124,58,237,0.05); }
+.view-tab.active { background:var(--primary); color:#fff; }
+.search-box input { padding:10px 16px; border:1px solid var(--border); border-radius:10px; font-size:14px; outline:none; width:280px; transition:border-color 0.2s; background:#fff; }
+.search-box input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+
+/* Content */
+.bookmark-content { max-width:1500px; margin:24px auto; padding:0 48px 80px; }
+.cat-section { margin-bottom:36px; }
+.cat-title { font-size:22px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; padding-bottom:12px; border-bottom:2px solid var(--primary); }
+.cat-title .count { font-size:14px; color:var(--text2); font-weight:400; }
+
+/* ===== Card View ===== */
+.view-card .bookmark-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px; }
+.view-card .bookmark-card { background:#fff; border-radius:14px; padding:22px 24px; border:1px solid var(--border); transition:all 0.2s; text-decoration:none; color:inherit; display:flex; gap:16px; align-items:flex-start; }
+.view-card .bookmark-card:hover { box-shadow:0 6px 24px rgba(0,0,0,0.08); border-color:var(--primary); transform:translateY(-2px); }
+.view-card .bicon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.view-card .bicon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
+.view-card .bicon.green { background:rgba(16,185,129,0.1); color:#10b981; }
+.view-card .bicon.orange { background:rgba(249,115,22,0.1); color:#f97316; }
+.view-card .bicon.purple { background:rgba(124,58,237,0.1); color:#7c3aed; }
+.view-card .bicon.teal { background:rgba(20,184,166,0.1); color:#14b8a6; }
+.view-card .binfo { flex:1; min-width:0; }
+.view-card .binfo h4 { font-size:15px; font-weight:600; margin-bottom:4px; }
+.view-card .binfo .url { font-size:12px; color:var(--text2); word-break:break-all; margin-bottom:6px; line-height:1.4; }
+.view-card .binfo .desc { font-size:13px; color:var(--text2); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+/* ===== Table View ===== */
+.view-table { display:none; }
+.view-table.active-view { display:block; }
+.view-table table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--border); }
+.view-table th { background:#f3f0ff; color:var(--primary); font-weight:600; font-size:14px; padding:14px 16px; text-align:left; border-bottom:1px solid var(--border); }
+.view-table td { padding:12px 16px; border-bottom:1px solid #f3f4f6; font-size:14px; }
+.view-table tr:last-child td { border-bottom:none; }
+.view-table tr:hover td { background:#faf5ff; }
+.view-table td a { color:var(--primary); text-decoration:none; font-weight:500; }
+.view-table td a:hover { text-decoration:underline; }
+.view-table td .tname { font-weight:600; color:var(--text); }
+.view-table td .tdesc { color:var(--text2); font-size:13px; }
+.view-table .badge { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; white-space:nowrap; }
+.view-table .badge.gov { background:rgba(59,130,246,0.1); color:#2563eb; }
+.view-table .badge.search { background:rgba(16,185,129,0.1); color:#059669; }
+
+/* ===== Waterfall View ===== */
+.view-waterfall { display:none; }
+.view-waterfall.active-view { display:block; }
+.view-waterfall .waterfall-grid { column-count:3; column-gap:16px; }
+.view-waterfall .waterfall-card { break-inside:avoid; margin-bottom:16px; background:#fff; border-radius:12px; border:1px solid var(--border); padding:20px; transition:all 0.2s; text-decoration:none; color:inherit; display:block; }
+.view-waterfall .waterfall-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.07); border-color:var(--primary); transform:translateY(-1px); }
+.view-waterfall .wicon { font-size:28px; margin-bottom:8px; }
+.view-waterfall .wtitle { font-size:15px; font-weight:600; margin-bottom:4px; }
+.view-waterfall .wdesc { font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:8px; }
+.view-waterfall .wurl { font-size:11px; color:#9ca3af; word-break:break-all; }
+
+@media(max-width:1100px){ .view-waterfall .waterfall-grid { column-count:2; } }
+@media(max-width:768px){
+  .navbar{padding:0 20px} .nav-links{gap:16px} .nav-links a{font-size:13px}
+  .bookmark-content{padding:0 20px 60px} .view-toolbar{padding:0 20px; flex-direction:column; align-items:stretch}
+  .search-box input{width:100%}
+  .view-card .bookmark-grid{grid-template-columns:1fr}
+  .view-waterfall .waterfall-grid{column-count:1}
+}
+
+/* Footer */
+.footer { background:#1f2937; color:#d1d5db; padding:48px 48px 40px; text-align:center; margin-top:60px; }
+.footer-inner { max-width:1500px; margin:0 auto; }
+.footer-brand { font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; }
+.footer-slogan { color:#9ca3af; font-size:14px; margin-bottom:24px; }
+.footer-divider { border:none; border-top:1px solid #374151; margin:24px 0; }
+.footer-copy { font-size:14px; color:#6b7280; }
+</style>
+</head>
+<body>
+
+<nav class="navbar"><div class="nav-inner">
+<a href="../index.html" class="nav-logo"><div class="nav-logo-icon">K</div><span class="nav-logo-text">开迈科技</span></a>
+<ul class="nav-links">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="kt1-同步撰写-patent-writer.html">专利撰写</a></li>
+                <li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
+                <li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
+                <li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
+                <li><a href="kt5-标记一致性-figure-checker.html">标记一致性</a></li>
+                <li><a href="kt6-提示词库-prompt-library.html">提示词库</a></li>
+                <li><a href="kt7-常用书签-bookmarks.html">常用书签</a></li>
+                <li><a href="kt8-书签-kmtech.html">class="active" 书签(简)</a></li>
+            </ul></div></nav>
+
+<div class="page-header"><h2>🔖 开迈 KMtech 书签精选</h2><p>专利代理人必备工具站，国知局官方 + 专利检索数据库一览</p></div>
+
+<div class="view-toolbar">
+<div class="view-tabs">
+<button class="view-tab active" onclick="switchView('card',this)">📇 卡片</button>
+<button class="view-tab" onclick="switchView('table',this)">📋 表格</button>
+<button class="view-tab" onclick="switchView('waterfall',this)">💧 瀑布流</button>
+</div>
+<div class="search-box"><input type="text" id="searchInput" placeholder="🔍 搜索网站..." oninput="filterSites()"></div>
+</div>
+
+<div class="bookmark-content" id="bookmarkContent"></div>
+
+<footer class="footer"><div class="footer-inner">
+<div class="footer-brand">开迈科技 kamaytech</div>
+<div class="footer-slogan">开拓新路线，迈向新格局 | Explore new routes and move towards a new pattern</div>
+<hr class="footer-divider"><div class="footer-copy">© 2025 开迈科技 kamaytech by cmaz501</div>
+</div></footer>
+
+<script>
+const data = [
+// ===== 国知局/官方 =====
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"国家知识产权局", url:"https://www.cnipa.gov.cn", desc:"国家知识产权局官网，政策法规、办事指南、公告通知" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"专利复审和无效", url:"https://www.cnipa.gov.cn/col/col2632/index.html", desc:"专利复审委员会，复审请求、无效宣告、口审公告" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"公共服务平台", url:"https://ggfw-sso.cnipa.gov.cn", desc:"统一身份认证，一站式访问国知局各业务系统" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"中国及多国专利审查信息查询", url:"https://cpquery.cponline.cnipa.gov.cn", desc:"查案卷状态、审查意见、费用信息，支持中英文" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"中国专利公布公告", url:"http://epub.cnipa.gov.cn", desc:"已公开专利全文查询，著录项目、法律状态" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"专利代理管理系统", url:"https://dlgl.cnipa.gov.cn", desc:"代理机构及代理师备案、变更、考核信息" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"代理机构查询", url:"https://ggfw.cnipa.gov.cn/poam/txnqueryAgencyOrg.do", desc:"全国专利代理机构信息查询" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"代理人查询", url:"https://ggfw.cnipa.gov.cn/poam/txnqueryAgent.do", desc:"全国专利代理师执业信息查询" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"专利代理师考试系统", url:"https://ggfw-dlsks.cnipa.gov.cn", desc:"专利代理师资格考试报名、准考证、成绩查询" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"IPC分类查询", url:"https://www.cnipa.gov.cn/col/col200/index.html", desc:"国际专利分类查询，按分类号定位技术领域" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"专利业务办理系统", url:"https://cponline.cnipa.gov.cn", desc:"在线提交专利申请、办理中间文件、缴费" },
+{ cat:"国知局/官方", icon:"🏛️", color:"blue", badge:"gov", name:"优先权文件DAS", url:"https://das.cnipa.gov.cn", desc:"优先权文件数字接入服务，电子交换优先权证明" },
+
+// ===== 专利检索/数据库 =====
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"Google Patents", url:"https://patents.google.com", desc:"全球专利全文检索，机器翻译覆盖100+国家/地区" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"Espacenet 欧专局", url:"https://worldwide.espacenet.com", desc:"欧洲专利局全球数据库，覆盖100+国家专利文献" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"WIPO Patentscope", url:"https://patentscope.wipo.int", desc:"WIPO 全球专利检索，PCT 申请全文查询" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"Patentics 智能语义", url:"https://www.patentics.com", desc:"AI语义专利检索分析，支持概念检索、分类导航" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"佰腾网", url:"https://www.baiten.cn", desc:"国内专利检索平台，简单/高级/语义检索一体" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"SooPAT 专利搜索", url:"http://www.soopat.com", desc:"免费专利检索分析工具，支持中文语义检索" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"专利之星", url:"http://www.patentstar.com.cn", desc:"专利检索与管理系统，分类号导航检索" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"智慧芽 PatSnap", url:"https://analytics.zhihuiya.com", desc:"全球专利情报分析，AI辅助搜索、3D专利地图" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"HimmPat", url:"https://www.himmpat.com", desc:"高效专利检索与分析平台" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"IPTOP 知识产权管家", url:"https://iptop.lotut.com", desc:"综合知识产权服务平台，专利/商标查询" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"极笔 patentfuture", url:"https://patentfuture.com", desc:"新一代专利检索与撰写辅助工具" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"汉信AI（原重乎）", url:"https://www.hanxinai.com", desc:"AI专利查重与检索，筛查低质量专利" },
+{ cat:"专利检索/数据库", icon:"🔍", color:"green", badge:"search", name:"专利查重重乎网", url:"https://www.chonghus.com", desc:"AI技术驱动的专利查重及对比分析" },
+];
+
+let currentView = 'card';
+
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view-card,.view-table,.view-waterfall').forEach(el => {
+    el.classList.remove('active-view');
+    el.style.display = 'none';
+  });
+  const klass = view === 'card' ? '.view-card' : view === 'table' ? '.view-table' : '.view-waterfall';
+  document.querySelector(klass).classList.add('active-view');
+  document.querySelector(klass).style.display = 'block';
+}
+
+function filterSites() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const cats = ['国知局/官方','专利检索/数据库'];
+  const container = document.getElementById('bookmarkContent');
+  container.innerHTML = '';
+  
+  cats.forEach(cat => {
+    let items = data.filter(d => d.cat === cat);
+    if (q) items = items.filter(d =>
+      d.name.includes(q) || d.desc.includes(q) || d.url.includes(q)
+    );
+    if (items.length === 0) return;
+    container.innerHTML += `<div class="cat-section"><div class="cat-title">${items[0].icon} ${cat} <span class="count">（${items.length}个）</span></div></div>`;
+    
+    // Card view
+    let cardHtml = `<div class="view-card ${currentView === 'card' ? 'active-view' : ''}" style="display:${currentView === 'card' ? 'block' : 'none'}"><div class="bookmark-grid">`;
+    items.forEach(d => {
+      cardHtml += `<a href="${d.url}" target="_blank" rel="noopener" class="bookmark-card"><div class="bicon ${d.color}">${d.icon}</div><div class="binfo"><h4>${d.name}</h4><div class="url">${d.url}</div><div class="desc">${d.desc}</div></div></a>`;
+    });
+    cardHtml += `</div></div>`;
+    
+    // Table view
+    let tableHtml = `<div class="view-table ${currentView === 'table' ? 'active-view' : ''}" style="display:${currentView === 'table' ? 'block' : 'none'}" data-cat="${cat}"><table><thead><tr><th style="width:200px">名称</th><th>URL</th><th>说明</th><th style="width:80px">标签</th></tr></thead><tbody>`;
+    items.forEach(d => {
+      tableHtml += `<tr><td class="tname">${d.icon} ${d.name}</td><td><a href="${d.url}" target="_blank" rel="noopener">${d.url}</a></td><td class="tdesc">${d.desc}</td><td><span class="badge ${d.badge}">${d.badge.toUpperCase()}</span></td></tr>`;
+    });
+    tableHtml += `</tbody></table></div>`;
+    
+    // Waterfall view
+    let wfHtml = `<div class="view-waterfall ${currentView === 'waterfall' ? 'active-view' : ''}" style="display:${currentView === 'waterfall' ? 'block' : 'none'}"><div class="waterfall-grid">`;
+    items.forEach(d => {
+      wfHtml += `<a href="${d.url}" target="_blank" rel="noopener" class="waterfall-card"><div class="wicon">${d.icon}</div><div class="wtitle">${d.name}</div><div class="wdesc">${d.desc}</div><div class="wurl">${d.url}</div></a>`;
+    });
+    wfHtml += `</div></div>`;
+    
+    container.innerHTML += cardHtml + tableHtml + wfHtml;
+  });
+}
+
+// Init
+filterSites();
+</script>
+</body>
+</html>
