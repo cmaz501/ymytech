@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>同步撰写工具 - 焉墨韵科技 ymytech</title>
+    <title>同步撰写工具 - 焉墨韵科 ymytech</title>
     <style>
         /* ===== 共享导航样式 ===== */
         :root {
@@ -420,6 +420,142 @@
             textarea { height: 120px; }
             .save-controls { flex-direction: column; gap:14px; }
         }
+    
+    
+/* ========== 主内容区 ========== */
+.page-main {
+    margin-left: 240px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+.sidebar.collapsed ~ .page-main { margin-left: 64px; }
+@media (max-width: 960px) {
+    .page-main { margin-left: 64px; }
+    .sidebar .sidebar-brand-text,
+    .sidebar .nav-label,
+    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
+}
+    
+/* ========== Left Sidebar ========== */
+.sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 240px;
+    background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
+    color: #e5e7eb;
+    z-index: 1000;
+    transition: width 0.3s ease;
+    display: flex; flex-direction: column;
+    box-shadow: 2px 0 16px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+.sidebar.collapsed { width: 64px; }
+.sidebar-header {
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+.sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    overflow: hidden; white-space: nowrap;
+    text-decoration: none; color: inherit;
+}
+.sidebar-brand-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: linear-gradient(135deg, #d4a14a, #b8862e);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #1f1437;
+    font-size: 20px; font-weight: 800;
+    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
+}
+.sidebar-brand-text {
+    font-size: 17px; font-weight: 700;
+    color: #fff;
+    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
+    letter-spacing: 1px;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+.sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
+.sidebar-toggle {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: #d1d5db;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
+.sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 10px;
+    list-style: none;
+}
+.sidebar-nav li { margin-bottom: 2px; }
+.sidebar-nav a {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #cbd5e1;
+    font-size: 14.5px;
+    transition: all 0.2s;
+    position: relative;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.sidebar-nav a.active {
+    background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
+    color: #d4a14a;
+}
+.sidebar-nav a.active::before {
+    content: '';
+    position: absolute; left: 0; top: 6px; bottom: 6px;
+    width: 3px;
+    background: #d4a14a;
+    border-radius: 0 3px 3px 0;
+}
+.sidebar-nav .nav-icon {
+    width: 22px; height: 22px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+}
+.sidebar-nav .nav-label { opacity: 1; transition: opacity 0.2s; }
+.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
+.sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    color: #9ca3af;
+    font-size: 12px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
+.sidebar.collapsed .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
+
+/* ========== Page Main ========== */
+.page-main {
+    margin-left: 240px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+@media (max-width: 960px) {
+    .sidebar { width: 64px; }
+    .page-main { margin-left: 64px; }
+    .sidebar .sidebar-brand-text,
+    .sidebar .nav-label,
+    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
+}
+
+
     </style>
 </head>
 <body class="day-mode">
@@ -428,25 +564,7 @@
     <div id="saveToast" class="save-toast"></div>
 
     <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="nav-inner">
-            <a href="../index.html" class="nav-logo">
-                <div class="nav-logo-icon">Y</div>
-                <span class="nav-logo-text">焉墨韵科技</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="../index.html">首页</a></li>
-                <li><a href="kt1-同步撰写-patent-writer.html">class="active" 专利撰写</a></li>
-                <li><a href="kt2-自动标号-auto-number.html">自动标号</a></li>
-                <li><a href="kt3-附图提取-figure-extract.html">附图提取</a></li>
-                <li><a href="kt4-引用检查-claims-checker.html">引用检查</a></li>
-                <li><a href="kt5-标记一致性-figure-checker.html">标记一致性</a></li>
-                <li><a href="kt6-提示词库-prompt-library.html">提示词库</a></li>
-                <li><a href="kt7-常用书签-bookmarks.html">常用书签</a></li>
-                <li><a href="ymy8-书签-ymytech.html">书签(简)</a></li>
-            </ul>
-        </div>
-    </nav>
+    
 
     <!-- 页面标题 -->
     <div class="page-header">
@@ -520,10 +638,10 @@
     <!-- 底部 -->
     <footer class="footer">
         <div class="footer-inner">
-            <div class="footer-brand">焉墨韵科技 ymytech</div>
-            <div class="footer-slogan">开拓新路线，迈向新格局 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
+            <div class="footer-brand">焉墨韵科 <span class="ymy-text">ymytech</span></div>
+            <div class="footer-slogan">金石为开 · 墨韵千年 &nbsp;|&nbsp; Explore new routes and move towards a new pattern</div>
             <hr class="footer-divider">
-            <div class="footer-copy">© 2025 焉墨韵科技 ymytech by cmaz501</div>
+            <div class="footer-copy">© 2025 焉墨韵科 <span class="ymy-text">ymytech</span> by cmaz501</div>
         </div>
     </footer>
 
@@ -863,6 +981,27 @@
                 if (fs) { for (let o of fs.options) { if (o.value === sf) { o.selected = true; break; } } }
             }
         });
+    </script>
+
+
+</main>
+
+
+</main>
+
+    <script>
+        // 侧边栏折叠（记住用户偏好）
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('toggleBtn');
+            if (!sidebar || !toggle) return;
+            const KEY = 'ymytech-sidebar-collapsed';
+            if (localStorage.getItem(KEY) === '1') sidebar.classList.add('collapsed');
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                localStorage.setItem(KEY, sidebar.classList.contains('collapsed') ? '1' : '0');
+            });
+        })();
     </script>
 
 </body>
