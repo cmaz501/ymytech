@@ -1,269 +1,173 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>精选书签 KT8 - 焉墨韵科 ymytech</title>
 <style>
-:root { --primary:#7c3aed; --primary-light:#8b5cf6; --accent:#10b981; --bg:#f8f9fa; --text:#1f2937; --text2:#6b7280; --border:#e5e7eb; }
-* { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; font-size:15px; }
+
 a { text-decoration:none; }
 
-/* Nav */
-.navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 48px; }
-.nav-inner { max-width:1500px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; }
-.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
-.nav-logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; }
-.nav-logo-text { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
-.nav-links a { text-decoration:none; color:var(--text2); font-size:16px; font-weight:500; transition:color 0.2s; position:relative; }
-.nav-links a:hover,.nav-links a.active { color:var(--primary); }
-.nav-links a.active::after { content:''; position:absolute; bottom:-6px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
-
-/* Header */
-.page-header { max-width:1500px; margin:0 auto; padding:32px 48px 0; text-align:center; }
-.page-header h2 { font-size:28px; font-weight:700; }
-.page-header p { color:var(--text2); font-size:15px; margin-top:8px; }
 
 /* Toolbar */
 .toolbar { max-width:1500px; margin:24px auto 0; padding:0 48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+
 .view-tabs { display:flex; gap:4px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:4px; }
+
 .view-tab { padding:8px 18px; border-radius:8px; border:none; background:transparent; cursor:pointer; font-size:14px; font-weight:500; color:var(--text2); transition:all 0.2s; }
+
 .view-tab:hover { color:var(--primary); background:rgba(124,58,237,0.05); }
+
 .view-tab.active { background:var(--primary); color:#fff; }
+
 .search-wrap { position:relative; }
+
 .search-wrap input { padding:10px 16px; border:1px solid var(--border); border-radius:10px; font-size:14px; outline:none; width:280px; transition:border-color 0.2s; background:#fff; }
+
 .search-wrap input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+
 
 /* Content */
 .content { max-width:1500px; margin:20px auto; padding:0 48px 80px; }
+
 .cat-section { margin-bottom:32px; }
+
 .cat-head { font-size:20px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:2px solid var(--primary); }
+
 .cat-head .count { font-size:14px; color:var(--text2); font-weight:400; }
+
 
 /* ===== Card Grid View ===== */
 .card-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(360px, 1fr)); gap:16px; }
+
 .c-card { background:#fff; border-radius:14px; padding:22px 24px; border:1px solid var(--border); transition:all 0.2s; display:flex; gap:14px; align-items:flex-start; }
+
 .c-card:hover { box-shadow:0 6px 24px rgba(0,0,0,0.07); border-color:var(--primary); transform:translateY(-2px); }
+
 .c-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+
 .c-icon.blue { background:rgba(59,130,246,0.1); color:#3b82f6; }
+
 .c-icon.green { background:rgba(16,185,129,0.1); color:#10b981; }
+
 .c-icon.orange { background:rgba(249,115,22,0.1); color:#f97316; }
+
 .c-icon.purple { background:rgba(124,58,237,0.1); color:#7c3aed; }
+
 .c-icon.teal { background:rgba(20,184,166,0.1); color:#14b8a6; }
+
 .c-info { flex:1; min-width:0; }
+
 .c-info h4 { font-size:15px; font-weight:600; color:var(--text); margin-bottom:4px; }
+
 .c-info .c-url { font-size:12px; color:#9ca3af; word-break:break-all; margin-bottom:6px; }
+
 .c-info .c-desc { font-size:13px; color:var(--text2); line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
 .c-badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; margin-top:2px; }
+
 .c-badge.gov { background:rgba(59,130,246,0.1); color:#2563eb; }
+
 .c-badge.search { background:rgba(16,185,129,0.1); color:#059669; }
+
 
 /* ===== List View ===== */
 .list-view { display:flex; flex-direction:column; gap:4px; }
+
 .l-item { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:10px; transition:all 0.15s; border:1px solid transparent; }
+
 .l-item:hover { background:#fff; border-color:var(--border); box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+
 .l-icon { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+
 .l-name { font-size:14px; font-weight:600; color:var(--text); min-width:160px; }
+
 .l-url { font-size:12px; color:#9ca3af; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
 .l-desc { font-size:13px; color:var(--text2); display:none; }
+
 .l-badge { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; flex-shrink:0; }
+
 .l-badge.gov { background:rgba(59,130,246,0.1); color:#2563eb; }
+
 .l-badge.search { background:rgba(16,185,129,0.1); color:#059669; }
+
 
 /* ===== Table View ===== */
 .table-wrap { background:#fff; border-radius:12px; border:1px solid var(--border); overflow:hidden; }
+
 .table-wrap table { width:100%; border-collapse:collapse; }
+
 .table-wrap th { background:#f5f3ff; color:var(--primary); font-weight:600; font-size:14px; padding:14px 18px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+
 .table-wrap td { padding:12px 18px; border-bottom:1px solid #f3f4f6; font-size:14px; vertical-align:top; }
+
 .table-wrap tr:last-child td { border-bottom:none; }
+
 .table-wrap tr:hover td { background:#faf5ff; }
+
 .table-wrap .t-name { font-weight:600; color:var(--text); white-space:nowrap; }
+
 .table-wrap .t-url a { color:var(--primary); word-break:break-all; }
+
 .table-wrap .t-url a:hover { text-decoration:underline; }
+
 .table-wrap .t-desc { color:var(--text2); font-size:13px; }
+
 .t-badge { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; white-space:nowrap; }
+
 .t-badge.gov { background:rgba(59,130,246,0.1); color:#2563eb; }
+
 .t-badge.search { background:rgba(16,185,129,0.1); color:#059669; }
 
+
 .hidden { display:none !important; }
+
 .empty-msg { text-align:center; padding:60px 20px; color:var(--text2); font-size:16px; }
 
-/* Footer */
-.footer { background:#1f2937; color:#d1d5db; padding:48px 48px 40px; text-align:center; margin-top:60px; }
-.footer-inner { max-width:1500px; margin:0 auto; }
-.footer-brand { font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; }
-.footer-slogan { color:#9ca3af; font-size:14px; margin-bottom:24px; }
-.footer-divider { border:none; border-top:1px solid #374151; margin:24px 0; }
-.footer-copy { font-size:14px; color:#6b7280; }
 
 @media (max-width:768px) {
-  .navbar { padding:0 20px; } .nav-links { gap:16px; } .nav-links a { font-size:13px; }
-  .content { padding:0 20px 60px; } .toolbar { padding:0 20px; flex-direction:column; align-items:stretch; }
+  .content { padding:0 20px 60px; }
+ .toolbar { padding:0 20px; flex-direction:column; align-items:stretch; }
+
   .search-wrap input { width:100%; }
+
   .card-grid { grid-template-columns:1fr; }
-  .l-name { min-width:100px; } .l-url { display:none; }
-  .table-wrap { overflow-x:auto; }
-}
 
-    
-/* ========== 主内容区 ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-.sidebar.collapsed ~ .page-main { margin-left: 64px; }
-@media (max-width: 960px) {
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
-}
-    
-/* ========== Left Sidebar ========== */
-.sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 240px;
-    background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
-    color: #e5e7eb;
-    z-index: 1000;
-    transition: width 0.3s ease;
-    display: flex; flex-direction: column;
-    box-shadow: 2px 0 16px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-.sidebar.collapsed { width: 64px; }
-.sidebar-header {
-    height: 72px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-.sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    overflow: hidden; white-space: nowrap;
-    text-decoration: none; color: inherit;
-}
-.sidebar-brand-icon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: linear-gradient(135deg, #d4a14a, #b8862e);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #1f1437;
-    font-size: 20px; font-weight: 800;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-}
-.sidebar-brand-text {
-    font-size: 17px; font-weight: 700;
-    color: #fff;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-    letter-spacing: 1px;
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-.sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
-.sidebar-toggle {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #d1d5db;
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-.sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
-.sidebar-nav {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    list-style: none;
-}
-.sidebar-nav li { margin-bottom: 2px; }
-.sidebar-nav a {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: #cbd5e1;
-    font-size: 14.5px;
-    transition: all 0.2s;
-    position: relative;
-    white-space: nowrap;
-    text-decoration: none;
-}
-.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.sidebar-nav a.active {
-    background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
-    color: #d4a14a;
-}
-.sidebar-nav a.active::before {
-    content: '';
-    position: absolute; left: 0; top: 6px; bottom: 6px;
-    width: 3px;
-    background: #d4a14a;
-    border-radius: 0 3px 3px 0;
-}
-.sidebar-nav .nav-icon {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-}
-.sidebar-nav .nav-label { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
-.sidebar-footer {
-    padding: 14px 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    color: #9ca3af;
-    font-size: 12px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
+  .l-name { min-width:100px; }
+ .l-url { display:none; }
 
-/* ========== Page Main ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-@media (max-width: 960px) {
-    .sidebar { width: 64px; }
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
-}
-
-
-    </style>
+  .table-wrap { overflow-x:auto; }}
+        /* 页头与内容容器（1500px）对齐 */
+        body .page-header { max-width: 1500px; padding: 36px 48px 0; }
+</style>
+<meta name="description" content="国家知识产权局官方站点与专利检索数据库快捷入口，支持卡片、列表、表格三种视图切换。">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/ymy.css">
 </head>
 <body>
-<!-- 左侧侧边栏 -->
+<!-- 左侧导航 -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <a href="../index.html" class="sidebar-brand">
             <div class="sidebar-brand-icon">焉</div>
             <span class="sidebar-brand-text">焉墨韵科</span>
         </a>
-        <button class="sidebar-toggle" id="toggleBtn" title="折叠/展开">«</button>
+        <button class="sidebar-toggle" id="toggleBtn" title="折叠 / 展开导航" aria-label="折叠或展开导航栏">&laquo;</button>
     </div>
     <ul class="sidebar-nav">
-        <li><a href="../index.html"><span class="nav-icon">⌂</span><span class="nav-label">首页</span></a></li>
-        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon">W</span><span class="nav-label">同步撰写</span></a></li>
-        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon">N</span><span class="nav-label">自动标号</span></a></li>
-        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon">F</span><span class="nav-label">附图提取</span></a></li>
-        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon">R</span><span class="nav-label">引用检查</span></a></li>
-        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon">C</span><span class="nav-label">标记一致性</span></a></li>
-        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon">P</span><span class="nav-label">提示词库</span></a></li>
-        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon">B</span><span class="nav-label">常用书签</span></a></li>
-        <li><a href="ymy8-书签-ymytech.html" class="active"><span class="nav-icon">S</span><span class="nav-label">书签(简)</span></a></li>
+        <li><a href="../index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">首页</span></a></li>
+        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">同步撰写</span></a></li>
+        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon" aria-hidden="true">⊕</span><span class="nav-label">自动标号</span></a></li>
+        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">附图提取</span></a></li>
+        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">引用检查</span></a></li>
+        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon" aria-hidden="true">◐</span><span class="nav-label">标记一致性</span></a></li>
+        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">提示词库</span></a></li>
+        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon" aria-hidden="true">★</span><span class="nav-label">常用书签</span></a></li>
+        <li><a href="ymy8-书签-ymytech.html" class="active"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">书签（简）</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
@@ -271,23 +175,18 @@ a { text-decoration:none; }
 </aside>
 
 <main class="page-main">
-
-<main class="page-main">
-
-
-
 <div class="page-header">
-  <h2>🔖 ymy ymytech 书签精选</h2>
+  <h2>书签精选</h2>
   <p>国知局官方入口 + 专利检索数据库 · 点击直达</p>
 </div>
 
 <div class="toolbar">
   <div class="view-tabs">
-    <button class="view-tab active" onclick="switchView('card',this)">📇 卡片</button>
-    <button class="view-tab" onclick="switchView('list',this)">📋 列表</button>
-    <button class="view-tab" onclick="switchView('table',this)">📊 表格</button>
+    <button class="view-tab active" onclick="switchView('card',this)">卡片</button>
+    <button class="view-tab" onclick="switchView('list',this)">列表</button>
+    <button class="view-tab" onclick="switchView('table',this)">表格</button>
   </div>
-  <div class="search-wrap"><input type="text" id="searchInput" placeholder="🔍 搜索名称 / URL / 描述..." oninput="renderAll()"></div>
+  <div class="search-wrap"><input type="text" id="searchInput" placeholder="搜索名称 / URL / 描述..." oninput="renderAll()"></div>
 </div>
 
 <div class="content" id="content"></div>
@@ -402,9 +301,6 @@ function renderAll() {
 // Init
 renderAll();
 </script>
-
-</main>
-
 
 </main>
 

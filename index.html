@@ -1,570 +1,512 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>焉墨韵科 · 金石意象 | 专利撰写效率工具</title>
-    <style>
-        :root {
-            --primary: #7c3aed;
-            --primary-light: #8b5cf6;
-            --primary-dark: #6d28d9;
-            --accent: #d4a14a;
-            --accent-dark: #b8862e;
-            --bg: #f8f9fa;
-            --bg-alt: #faf7f2;
-            --text: #1f2937;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-            --sidebar-w: 248px;
-            --sidebar-w-collapsed: 68px;
-            --navbar-h: 72px;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body {
-            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.8;
-            -webkit-font-smoothing: antialiased;
-            scroll-behavior: smooth;
-        }
-        a { color: inherit; text-decoration: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>焉墨韵科 · 金石意象 | 专利撰写效率工具集</title>
+<meta name="description" content="焉墨韵科 ymytech —— 专为专利代理人打造的纯前端撰写工具集：同步撰写、自动标号、附图标记提取、引用检查、标记一致性检查、提示词库与书签导航。免注册、数据不出本地。">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/ymy.css">
+<style>
+    /* ===== 首页专属：首屏与陈列 ===== */
 
-        /* ========== 左侧侧边栏 ========== */
-        .sidebar {
-            position: fixed;
-            top: 0; left: 0; bottom: 0;
-            width: var(--sidebar-w);
-            background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
-            color: #e5e7eb;
-            z-index: 1000;
-            transition: width 0.3s ease;
-            display: flex; flex-direction: column;
-            box-shadow: 2px 0 16px rgba(0,0,0,0.08);
-        }
-        .sidebar.collapsed { width: var(--sidebar-w-collapsed); }
-        .sidebar-header {
-            height: var(--navbar-h);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            flex-shrink: 0;
-        }
-        .sidebar-brand {
-            display: flex; align-items: center; gap: 12px;
-            overflow: hidden; white-space: nowrap;
-        }
-        .sidebar-brand-icon {
-            width: 40px; height: 40px; flex-shrink: 0;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: #1f1437;
-            font-size: 22px; font-weight: 800;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-        }
-        .sidebar-brand-text {
-            font-size: 18px; font-weight: 700;
-            color: #fff;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-            letter-spacing: 1px;
-            opacity: 1;
-            transition: opacity 0.2s;
-        }
-        .sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
-        .sidebar-toggle {
-            background: rgba(255,255,255,0.08);
-            border: none;
-            color: #d1d5db;
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
-        .sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
+    .hero {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 72px 40px 0;
+        text-align: center;
+    }
+    .hero-eyebrow {
+        display: inline-block;
+        font-size: 12.5px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        color: var(--accent-2);
+        background: var(--accent-soft);
+        border: 1px solid #ece2cd;
+        border-radius: 999px;
+        padding: 5px 14px;
+        margin-bottom: 22px;
+    }
+    .hero h1 {
+        font-size: 46px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1.25;
+        color: var(--ink);
+        margin-bottom: 18px;
+    }
+    .hero h1 .sep { color: var(--ink-4); font-weight: 300; margin: 0 6px; }
+    .hero h1 .sub { color: var(--ink-3); font-weight: 400; font-size: 0.72em; letter-spacing: 0.1em; }
+    .hero-lead {
+        max-width: 640px;
+        margin: 0 auto;
+        color: var(--ink-3);
+        font-size: 15px;
+        line-height: 1.9;
+    }
+    .hero-meta {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px 26px;
+        margin-top: 30px;
+        font-size: 13px;
+        color: var(--ink-3);
+    }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+    .hero-meta span::before {
+        content: "";
+        width: 3px; height: 3px;
+        border-radius: 50%;
+        background: var(--accent);
+        opacity: 0.75;
+    }
+    .hero-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 34px;
+        flex-wrap: wrap;
+    }
+    .hero-actions a {
+        display: inline-block;
+        padding: 10px 22px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: var(--r);
+        border: 1px solid var(--line);
+        color: var(--ink);
+        background: var(--bg);
+        transition: all 0.15s ease;
+    }
+    .hero-actions a:hover { border-color: var(--ink-4); background: var(--bg-sink); }
+    .hero-actions a.primary {
+        color: #fff;
+        background: var(--ink);
+        border-color: var(--ink);
+    }
+    .hero-actions a.primary:hover { background: #2b2f37; border-color: #2b2f37; }
 
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 12px;
-            list-style: none;
-        }
-        .sidebar-nav li { margin-bottom: 4px; }
-        .sidebar-nav a {
-            display: flex; align-items: center; gap: 14px;
-            padding: 11px 14px;
-            border-radius: 10px;
-            color: #cbd5e1;
-            font-size: 15px;
-            transition: all 0.2s;
-            position: relative;
-            white-space: nowrap;
-        }
-        .sidebar-nav a:hover {
-            background: rgba(255,255,255,0.06);
-            color: #fff;
-        }
-        .sidebar-nav a.active {
-            background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
-            color: var(--accent);
-        }
-        .sidebar-nav a.active::before {
-            content: '';
-            position: absolute; left: 0; top: 8px; bottom: 8px;
-            width: 3px;
-            background: var(--accent);
-            border-radius: 0 3px 3px 0;
-        }
-        .sidebar-nav .nav-icon {
-            width: 22px; height: 22px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-        }
-        .sidebar-nav .nav-label {
-            opacity: 1;
-            transition: opacity 0.2s;
-        }
-        .sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
+    /* 双风格陈列 */
+    .gallery {
+        max-width: 920px;
+        margin: 52px auto 0;
+        padding: 0 40px;
+    }
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .gallery-card {
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        overflow: hidden;
+        background: var(--bg);
+        transition: border-color 0.2s ease;
+    }
+    .gallery-card:hover { border-color: var(--ink-4); }
+    .gallery-img-wrap {
+        aspect-ratio: 1024 / 948;
+        overflow: hidden;
+        background: var(--bg-sink);
+        border-bottom: 1px solid var(--line);
+    }
+    .gallery-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 18px;
+    }
+    .gallery-meta h3 { font-size: 14px; font-weight: 600; letter-spacing: 0.02em; }
+    .gallery-tag {
+        flex-shrink: 0;
+        font-size: 11.5px;
+        color: var(--ink-3);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 2px 10px;
+    }
 
-        .sidebar-footer {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            color: #9ca3af;
-            font-size: 12px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .sidebar.collapsed .sidebar-footer { font-size: 14px; }
-        .sidebar.collapsed .sidebar-footer-full { display: none; }
-        .sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
+    /* 区块 */
+    .section {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 76px 40px 0;
+    }
+    .section-head { margin-bottom: 28px; }
+    .section-head h2 {
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
+    .section-head p {
+        margin-top: 7px;
+        font-size: 13.5px;
+        color: var(--ink-3);
+    }
 
-        /* ========== 主内容区 ========== */
-        .main {
-            margin-left: var(--sidebar-w);
-            transition: margin-left 0.3s ease;
-            min-height: 100vh;
-        }
-        .main.expanded { margin-left: var(--sidebar-w-collapsed); }
+    /* 工具卡片 */
+    .tools-grid {
+        display: grid;
+        /* min() 保证窄屏下不会撑破容器 */
+        grid-template-columns: repeat(auto-fill, minmax(min(316px, 100%), 1fr));
+        gap: 14px;
+    }
+    .tool-card {
+        display: flex;
+        flex-direction: column;
+        padding: 22px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+    .tool-card:hover { border-color: var(--ink-4); background: var(--bg-sink); }
+    .tool-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .tool-card-icon {
+        width: 32px; height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--r-sm);
+        border: 1px solid var(--line);
+        background: var(--bg-soft);
+        color: var(--ink-2);
+        font-size: 15px;
+    }
+    .tool-card-code {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        color: var(--ink-4);
+    }
+    .tool-card h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    .tool-card p {
+        flex: 1;
+        font-size: 13.5px;
+        line-height: 1.75;
+        color: var(--ink-3);
+    }
+    .tool-card .tag {
+        align-self: flex-start;
+        margin-top: 16px;
+    }
+    .tool-card .tag.core {
+        color: var(--accent-2);
+        background: var(--accent-soft);
+        border-color: #ece2cd;
+    }
 
-        /* ========== Hero ========== */
-        .hero {
-            padding: 24px 64px 16px;
-            max-width: 1500px; margin: 0 auto;
-            text-align: center;
-        }
-        .hero-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(212,161,74,0.1));
-            color: var(--primary);
-            padding: 5px 20px; border-radius: 20px;
-            font-size: 13px; font-weight: 500;
-            margin-bottom: 12px;
-            border: 1px solid rgba(124,58,237,0.15);
-        }
-        .hero h1 {
-            font-size: 44px; font-weight: 800; letter-spacing: 2px;
-            margin-bottom: 8px;
-            line-height: 1.2;
-            background: linear-gradient(135deg, #1f1437 0%, #7c3aed 50%, #d4a14a 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-        }
-        .hero h1 .accent { color: var(--accent-dark); }
-        .hero-subtitle {
-            font-size: 14.5px; color: var(--text-secondary);
-            max-width: 760px; margin: 6px auto 0; line-height: 1.6;
-        }
-        .hero-divider {
-            width: 50px; height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 2px;
-            margin: 14px auto 0;
-        }
+    /* 特性：发丝线网格 */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border: 1px solid var(--line);
+        border-radius: var(--r-lg);
+        overflow: hidden;
+    }
+    .feature-item {
+        padding: 26px 24px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: var(--bg);
+    }
+    .feature-item:nth-child(3n) { border-right: none; }
+    .feature-item:nth-child(n + 4) { border-bottom: none; }
+    .feature-item h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .feature-item h4::before {
+        content: "";
+        width: 4px; height: 4px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+    }
+    .feature-item p {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--ink-3);
+    }
 
-        /* ========== 双风格图画 ========== */
-        .gallery {
-            max-width: 1500px; margin: 12px auto 0;
-            padding: 0 64px;
-        }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .gallery-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .gallery-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 60px rgba(124,58,237,0.15);
-            border-color: transparent;
-        }
-        .gallery-img-wrap {
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            background: #f3f0ea;
-        }
-        .gallery-img-wrap img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s;
-        }
-        .gallery-card:hover .gallery-img-wrap img { transform: scale(1.05); }
-        .gallery-meta {
-            padding: 12px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .gallery-meta h3 {
-            font-size: 16px; font-weight: 700;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-        }
-        .gallery-tag {
-            padding: 3px 12px;
-            border-radius: 16px;
-            font-size: 12px; font-weight: 600;
-        }
-        .gallery-tag.modern {
-            background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.1));
-            color: var(--primary);
-        }
-        .gallery-tag.classical {
-            background: linear-gradient(135deg, rgba(212,161,74,0.1), rgba(184,134,46,0.1));
-            color: var(--accent-dark);
-        }
-
-        /* ========== 通用区块 ========== */
-        .section {
-            max-width: 1500px;
-            margin: 0 auto;
-            padding: 24px 64px 40px;
-        }
-        .section-header { text-align: center; margin-bottom: 20px; }
-        .section-header h2 {
-            font-size: 24px; font-weight: 700;
-            margin-bottom: 6px;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-        }
-        .section-header p { color: var(--text-secondary); font-size: 14px; }
-
-        /* ========== 工具卡片 ========== */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 24px;
-        }
-        .tool-card {
-            background: white; border-radius: 18px; padding: 32px 30px;
-            border: 1px solid var(--border); transition: all 0.3s ease;
-            color: inherit; display: block;
-            position: relative; overflow: hidden;
-        }
-        .tool-card:hover {
-            box-shadow: 0 16px 48px rgba(124,58,237,0.12);
-            transform: translateY(-4px);
-            border-color: transparent;
-        }
-        .tool-card-icon {
-            width: 60px; height: 60px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px; margin-bottom: 20px;
-        }
-        .tool-card-icon.purple { background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.12)); color: var(--primary); }
-        .tool-card-icon.green  { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(52,211,153,0.12)); color: var(--accent); }
-        .tool-card-icon.blue   { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(96,165,250,0.12)); color: #3b82f6; }
-        .tool-card-icon.red    { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(248,113,113,0.12)); color: #ef4444; }
-        .tool-card-icon.orange { background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(251,146,60,0.12)); color: #f97316; }
-        .tool-card-icon.teal   { background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(45,212,191,0.12)); color: #14b8a6; }
-        .tool-card h3 { font-size: 21px; font-weight: 700; margin-bottom: 10px; }
-        .tool-card p { color: var(--text-secondary); font-size: 14.5px; line-height: 1.7; }
-        .tool-card .tag {
-            display: inline-block; margin-top: 18px; padding: 5px 14px;
-            background: rgba(124,58,237,0.08); color: var(--primary);
-            border-radius: 8px; font-size: 13px; font-weight: 500;
-        }
-
-        /* ========== 特性 ========== */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-        }
-        .feature-item {
-            text-align: center; padding: 32px 24px;
-            background: white; border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-        .feature-item:hover {
-            box-shadow: 0 12px 36px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-        .feature-icon { font-size: 40px; margin-bottom: 16px; }
-        .feature-item h4 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-        .feature-item p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-
-        /* ========== Footer ========== */
-        .footer {
-            background: linear-gradient(180deg, #1f1437 0%, #150c24 100%);
-            color: #d1d5db;
-            padding: 56px 48px 36px; text-align: center;
-            margin-top: 40px;
-        }
-        .footer-inner { max-width: 1500px; margin: 0 auto; }
-        .footer-brand {
-            font-size: 26px; font-weight: 700;
-            color: white; margin-bottom: 12px;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-            letter-spacing: 2px;
-        }
-        .footer-brand .ymy-text { color: var(--accent); }
-        .footer-slogan {
-            color: #9ca3af; font-size: 15px;
-            margin-bottom: 28px;
-            font-family: "STKaiti", "KaiTi", "Microsoft YaHei", serif;
-        }
-        .footer-divider {
-            border: none; border-top: 1px solid rgba(255,255,255,0.1);
-            margin: 28px 0;
-        }
-        .footer-copy { font-size: 13.5px; color: #6b7280; }
-
-        /* ========== 响应式 ========== */
-        @media (max-width: 960px) {
-            .gallery-grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 36px; }
-            .hero { padding: 20px 24px 12px; }
-            .gallery, .section { padding-left: 24px; padding-right: 24px; }
-        }
-        @media (max-width: 768px) {
-            .sidebar { width: var(--sidebar-w-collapsed); }
-            .main { margin-left: var(--sidebar-w-collapsed); }
-            .sidebar .sidebar-brand-text,
-            .sidebar .nav-label,
-            .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
-            .tools-grid { grid-template-columns: 1fr; }
-            .features-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
+    @media (max-width: 960px) {
+        .hero { padding: 48px 20px 0; }
+        .hero h1 { font-size: 32px; }
+        .gallery { padding: 0 20px; margin-top: 40px; }
+        .gallery-grid { grid-template-columns: 1fr; }
+        .section { padding: 56px 20px 0; }
+        .features-grid { grid-template-columns: 1fr 1fr; }
+        .feature-item:nth-child(3n) { border-right: 1px solid var(--line); }
+        .feature-item:nth-child(2n) { border-right: none; }
+        .feature-item:nth-child(n + 4) { border-bottom: 1px solid var(--line); }
+        .feature-item:nth-child(n + 5) { border-bottom: none; }
+    }
+    @media (max-width: 600px) {
+        .hero { padding: 40px 20px 0; }
+        .hero h1 { font-size: 26px; letter-spacing: 0; }
+        .hero-lead { font-size: 14px; }
+        .hero-meta { gap: 8px 16px; font-size: 12.5px; }
+        .section { padding-top: 44px; }
+        .tool-card { padding: 18px; }
+        .features-grid { grid-template-columns: 1fr; }
+        .feature-item { border-right: none; }
+        .feature-item:not(:last-child) { border-bottom: 1px solid var(--line); }
+    }
+</style>
 </head>
 <body>
-    <!-- 左侧侧边栏 -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="index.html" class="sidebar-brand">
-                <div class="sidebar-brand-icon">焉</div>
-                <span class="sidebar-brand-text">焉墨韵科</span>
+
+<!-- 左侧导航 -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="index.html" class="sidebar-brand">
+            <div class="sidebar-brand-icon">焉</div>
+            <span class="sidebar-brand-text">焉墨韵科</span>
+        </a>
+        <button class="sidebar-toggle" id="toggleBtn" title="折叠 / 展开导航" aria-label="折叠或展开导航栏">«</button>
+    </div>
+    <ul class="sidebar-nav">
+        <li><a href="index.html" class="active"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">首页</span></a></li>
+        <li><a href="tools/ymy1-同步撰写-patent-writer.html"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">同步撰写</span></a></li>
+        <li><a href="tools/ymy2-自动标号-auto-number.html"><span class="nav-icon" aria-hidden="true">⊕</span><span class="nav-label">自动标号</span></a></li>
+        <li><a href="tools/ymy3-附图提取-figure-extract.html"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">附图提取</span></a></li>
+        <li><a href="tools/ymy4-引用检查-claims-checker.html"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">引用检查</span></a></li>
+        <li><a href="tools/ymy5-标记一致性-figure-checker.html"><span class="nav-icon" aria-hidden="true">◐</span><span class="nav-label">标记一致性</span></a></li>
+        <li><a href="tools/ymy6-提示词库-prompt-library.html"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">提示词库</span></a></li>
+        <li><a href="tools/ymy7-常用书签-bookmarks.html"><span class="nav-icon" aria-hidden="true">★</span><span class="nav-label">常用书签</span></a></li>
+        <li><a href="tools/ymy8-书签-ymytech.html"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">书签（简）</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+        <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
+    </div>
+</aside>
+
+<main class="page-main" id="main">
+
+    <!-- 首屏 -->
+    <section class="hero">
+        <span class="hero-eyebrow">专利撰写效率工具集</span>
+        <h1>焉墨韵科<span class="sep">·</span><span class="sub">金石意象</span></h1>
+        <p class="hero-lead">
+            以千年金石篆刻为意象，以现代工程效率为内核。
+            为专利代理人打造一套沉淀质感与工程节奏兼具的撰写工具，让每一次落笔都如琢如磨、从容不迫。
+        </p>
+        <div class="hero-meta">
+            <span>8 款工具</span>
+            <span>纯前端运行</span>
+            <span>数据不出本地</span>
+            <span>免注册使用</span>
+        </div>
+        <div class="hero-actions">
+            <a href="#tools" class="primary">浏览工具集</a>
+            <a href="tools/ymy1-同步撰写-patent-writer.html">进入同步撰写</a>
+        </div>
+    </section>
+
+    <!-- 双风格陈列 -->
+    <section class="gallery">
+        <div class="gallery-grid">
+            <figure class="gallery-card">
+                <div class="gallery-img-wrap">
+                    <picture>
+                        <source srcset="assets/hero-modern.webp" type="image/webp">
+                        <img src="assets/hero-modern.png" alt="金石意象 · 现代几何" width="1024" height="948" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <figcaption class="gallery-meta">
+                    <h3>金石意象 · 现代几何</h3>
+                    <span class="gallery-tag">现代风格</span>
+                </figcaption>
+            </figure>
+            <figure class="gallery-card">
+                <div class="gallery-img-wrap">
+                    <picture>
+                        <source srcset="assets/hero-classical.webp" type="image/webp">
+                        <img src="assets/hero-classical.png" alt="金石意象 · 篆刻古韵" width="1024" height="948" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <figcaption class="gallery-meta">
+                    <h3>金石意象 · 篆刻古韵</h3>
+                    <span class="gallery-tag">古典风格</span>
+                </figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- 工具集 -->
+    <section class="section" id="tools">
+        <div class="section-head">
+            <h2>效率工具集</h2>
+            <p>覆盖撰写、标号、附图、检查、检索全流程 —— 即开即用</p>
+        </div>
+        <div class="tools-grid">
+
+            <a href="tools/ymy1-同步撰写-patent-writer.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">✎</span>
+                    <span class="tool-card-code">YMY1</span>
+                </div>
+                <h3>同步撰写</h3>
+                <p>术语映射库配合撰写工作区，输入数字自动替换为术语。支持括号与数字两种模式、三套配色主题、历史备份恢复与本地文件保存。</p>
+                <span class="tag core">核心工具</span>
             </a>
-            <button class="sidebar-toggle" id="toggleBtn" title="折叠/展开">«</button>
+
+            <a href="tools/ymy2-自动标号-auto-number.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">⊕</span>
+                    <span class="tool-card-code">YMY2</span>
+                </div>
+                <h3>自动加标号</h3>
+                <p>输入原始文本与标号规则，一键批量处理，同时生成说明书格式与权利要求书格式，省去手动标号的繁琐。</p>
+                <span class="tag">批量处理</span>
+            </a>
+
+            <a href="tools/ymy3-附图提取-figure-extract.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">▣</span>
+                    <span class="tool-card-code">YMY3</span>
+                </div>
+                <h3>CAD PDF 附图标记提取</h3>
+                <p>上传 CAD 导出的 PDF 图纸，自动提取全部标号数字，去重排序后一键输出为撰写格式，免去手工抄录。</p>
+                <span class="tag">新上线</span>
+            </a>
+
+            <a href="tools/ymy4-引用检查-claims-checker.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">◉</span>
+                    <span class="tool-card-code">YMY4</span>
+                </div>
+                <h3>权利要求引用检查</h3>
+                <p>自动解析权利要求之间的引用关系，检测自引用、引用不存在、循环引用、多引多等问题，并生成引用关系树状图。</p>
+                <span class="tag">新上线</span>
+            </a>
+
+            <a href="tools/ymy5-标记一致性-figure-checker.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">◐</span>
+                    <span class="tool-card-code">YMY5</span>
+                </div>
+                <h3>附图标记一致性检查</h3>
+                <p>说明书、权利要求书、附图三方标记交叉比对，快速定位遗漏或多余标记，生成详细对照表，确保三者一致。</p>
+                <span class="tag">新上线</span>
+            </a>
+
+            <a href="tools/ymy6-提示词库-prompt-library.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">✦</span>
+                    <span class="tool-card-code">YMY6</span>
+                </div>
+                <h3>AI 提示词库</h3>
+                <p>汇集专利撰写、审查答复、技术挖掘、权利要求布局等场景的常用提示词，分类浏览、一键复制，持续更新。</p>
+                <span class="tag">新上线</span>
+            </a>
+
+            <a href="tools/ymy7-常用书签-bookmarks.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">★</span>
+                    <span class="tool-card-code">YMY7</span>
+                </div>
+                <h3>常用网站书签</h3>
+                <p>专利代理日常工作常用网站汇总：官方查询、检索数据库、协会公告、法律法规，分类整理，一键直达。</p>
+                <span class="tag">新上线</span>
+            </a>
+
+            <a href="tools/ymy8-书签-ymytech.html" class="tool-card">
+                <div class="tool-card-top">
+                    <span class="tool-card-icon" aria-hidden="true">◇</span>
+                    <span class="tool-card-code">YMY8</span>
+                </div>
+                <h3>精选书签</h3>
+                <p>国家知识产权局官方站点与专利检索数据库快捷入口，支持卡片、列表、表格三种视图切换。</p>
+                <span class="tag">新上线</span>
+            </a>
+
         </div>
-        <ul class="sidebar-nav">
-            <li><a href="index.html" class="active">
-                <span class="nav-icon">⌂</span><span class="nav-label">首页</span>
-            </a></li>
-            <li><a href="tools/ymy1-同步撰写-patent-writer.html">
-                <span class="nav-icon">✍</span><span class="nav-label">同步撰写</span>
-            </a></li>
-            <li><a href="tools/ymy2-自动标号-auto-number.html">
-                <span class="nav-icon">⊕</span><span class="nav-label">自动标号</span>
-            </a></li>
-            <li><a href="tools/ymy3-附图提取-figure-extract.html">
-                <span class="nav-icon">▣</span><span class="nav-label">附图提取</span>
-            </a></li>
-            <li><a href="tools/ymy4-引用检查-claims-checker.html">
-                <span class="nav-icon">◉</span><span class="nav-label">引用检查</span>
-            </a></li>
-            <li><a href="tools/ymy5-标记一致性-figure-checker.html">
-                <span class="nav-icon">◐</span><span class="nav-label">标记一致性</span>
-            </a></li>
-            <li><a href="tools/ymy6-提示词库-prompt-library.html">
-                <span class="nav-icon">✎</span><span class="nav-label">提示词库</span>
-            </a></li>
-            <li><a href="tools/ymy7-常用书签-bookmarks.html">
-                <span class="nav-icon">★</span><span class="nav-label">常用书签</span>
-            </a></li>
-            <li><a href="tools/ymy8-书签-ymytech.html">
-                <span class="nav-icon">✦</span><span class="nav-label">书签(简)</span>
-            </a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
-            <span style="display:none;">©</span>
+    </section>
+
+    <!-- 特性 -->
+    <section class="section">
+        <div class="section-head">
+            <h2>为何选择焉墨韵科</h2>
+            <p>从专利代理人的真实工作流出发设计</p>
         </div>
-    </aside>
-
-    <!-- 主内容 -->
-    <main class="main" id="main">
-        <section class="hero">
-            <div class="hero-badge">墨韵千年 · 金石为开</div>
-            <h1>焉墨韵科 · 金石意象</h1>
-            <p class="hero-subtitle">
-                以千年金石篆刻为意象，以现代工程效率为内核。<br>
-                焉墨韵科致力于为专利代理人打造沉淀质感与科技节奏兼具的撰写工具集，
-                让每一位专利人都能如琢如磨，从容落笔。
-            </p>
-            <div class="hero-divider"></div>
-        </section>
-
-        <!-- 双风格图画 -->
-        <section class="gallery">
-            <div class="gallery-grid">
-                <div class="gallery-card">
-                    <div class="gallery-img-wrap">
-                        <img src="assets/hero-modern.png" alt="金石意象 · 现代风格" loading="lazy">
-                    </div>
-                    <div class="gallery-meta">
-                        <h3>金石意象 · 现代几何</h3>
-                        <span class="gallery-tag modern">现代风格</span>
-                    </div>
-                </div>
-                <div class="gallery-card">
-                    <div class="gallery-img-wrap">
-                        <img src="assets/hero-classical.png" alt="金石意象 · 古典风格" loading="lazy">
-                    </div>
-                    <div class="gallery-meta">
-                        <h3>金石意象 · 篆刻古韵</h3>
-                        <span class="gallery-tag classical">古典风格</span>
-                    </div>
-                </div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <h4>极速响应</h4>
+                <p>纯前端计算，没有服务器往返延迟，输入即刻替换。</p>
             </div>
-        </section>
+            <div class="feature-item">
+                <h4>数据安全</h4>
+                <p>全部数据仅存于本地浏览器，任何内容都不会上传。</p>
+            </div>
+            <div class="feature-item">
+                <h4>舒适阅读</h4>
+                <p>白天、黑夜、护眼三套主题随心切换，并可自定义字体。</p>
+            </div>
+            <div class="feature-item">
+                <h4>备份无忧</h4>
+                <p>自动保存、手动备份、本地文件导出三重保障。</p>
+            </div>
+            <div class="feature-item">
+                <h4>术语统计</h4>
+                <p>实时统计每个术语的出现次数，遗漏一目了然。</p>
+            </div>
+            <div class="feature-item">
+                <h4>完全免费</h4>
+                <p>无需注册、无需付费，打开浏览器即可使用。</p>
+            </div>
+        </div>
+    </section>
 
-        <!-- 工具集 -->
-        <section class="section">
-            <div class="section-header">
-                <h2>◈ 效率工具集</h2>
-                <p>专为专利撰写场景打造，简单实用，即开即用</p>
-            </div>
-            <div class="tools-grid">
-                <a href="tools/ymy1-同步撰写-patent-writer.html" class="tool-card">
-                    <div class="tool-card-icon purple">✍</div>
-                    <h3>同步撰写工具 YMY1</h3>
-                    <p>术语映射库 + 工作区，输入数字自动替换为术语。支持括号/数字两种模式切换，白天/黑夜/护眼三套主题，历史备份恢复，本地文件保存。</p>
-                    <span class="tag">核心工具</span>
-                </a>
-                <a href="tools/ymy2-自动标号-auto-number.html" class="tool-card">
-                    <div class="tool-card-icon green">⊕</div>
-                    <h3>自动加标号工具 YMY2</h3>
-                    <p>一键批量替换——输入原始文本与标号规则，同时生成说明书格式和权利要求书格式，省去手动标号的繁琐。</p>
-                    <span class="tag">批量处理</span>
-                </a>
-                <a href="tools/ymy3-附图提取-figure-extract.html" class="tool-card">
-                    <div class="tool-card-icon blue">▣</div>
-                    <h3>CAD PDF 附图标记提取 YMY3</h3>
-                    <p>上传 CAD 导出的 PDF 图纸，自动提取所有标号数字，去重排序一键输出为撰写格式，省去手工抄录附图标记的麻烦。</p>
-                    <span class="tag">新上线</span>
-                </a>
-                <a href="tools/ymy4-引用检查-claims-checker.html" class="tool-card">
-                    <div class="tool-card-icon red">◉</div>
-                    <h3>权利要求引用检查器 YMY4</h3>
-                    <p>自动解析权利要求间的引用关系，检测自引用、引用不存在、循环引用、多引多等常见问题，生成引用关系树状图。</p>
-                    <span class="tag">新上线</span>
-                </a>
-                <a href="tools/ymy5-标记一致性-figure-checker.html" class="tool-card">
-                    <div class="tool-card-icon orange">◐</div>
-                    <h3>附图标记一致性检查 YMY5</h3>
-                    <p>说明书、权利要求书、附图三方标记交叉比对，快速发现遗漏或多余标记，生成详细对照表，确保三者一致。</p>
-                    <span class="tag">新上线</span>
-                </a>
-                <a href="tools/ymy6-提示词库-prompt-library.html" class="tool-card">
-                    <div class="tool-card-icon teal">✎</div>
-                    <h3>AI 提示词库 YMY6</h3>
-                    <p>收集专利撰写、审查答复、技术挖掘、权利要求布局等常用 AI 提示词，分类浏览一键复制，持续更新。</p>
-                    <span class="tag">新上线</span>
-                </a>
-                <a href="tools/ymy7-常用书签-bookmarks.html" class="tool-card">
-                    <div class="tool-card-icon purple">★</div>
-                    <h3>常用网站书签 YMY7</h3>
-                    <p>专利代理日常工作常用网站汇总：官方查询、检索数据库、协会公告、法律法规，一键直达，持续更新。</p>
-                    <span class="tag">新上线</span>
-                </a>
-                <a href="tools/ymy8-书签-ymytech.html" class="tool-card">
-                    <div class="tool-card-icon teal">✦</div>
-                    <h3>精选书签 YMY8</h3>
-                    <p>国知局官方站点 + 专利检索数据库快捷入口，支持卡片/表格/瀑布流三种视图切换。</p>
-                    <span class="tag">新上线</span>
-                </a>
-            </div>
-        </section>
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">焉墨韵科 <span class="ymy-text">ymytech</span></div>
+            <div class="footer-slogan">金石为开 · 墨韵千年 · 沉淀如琢如磨的撰写体验</div>
+            <hr class="footer-divider">
+            <div class="footer-copy">© 2025 焉墨韵科 ymytech · 金石意象 by cmaz501</div>
+        </div>
+    </footer>
 
-        <!-- 特性 -->
-        <section class="section">
-            <div class="section-header">
-                <h2>✦ 为何选焉墨韵科</h2>
-                <p>从专利代理人的真实工作流出发设计</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">⚡</div>
-                    <h4>极速响应</h4>
-                    <p>纯前端计算，无需服务器延迟，输入即替换</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🔒</div>
-                    <h4>数据安全</h4>
-                    <p>所有数据存储在本地浏览器，绝不上传</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🎨</div>
-                    <h4>舒适体验</h4>
-                    <p>三套主题切换、字体自定义，护眼不疲劳</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">💾</div>
-                    <h4>备份无忧</h4>
-                    <p>自动保存 + 手动备份 + 本地文件导出，三重保障</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">◈</div>
-                    <h4>术语统计</h4>
-                    <p>实时统计每个术语出现次数，遗漏一目了然</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">✦</div>
-                    <h4>完全免费</h4>
-                    <p>无需注册，无需付费，打开浏览器即可使用</p>
-                </div>
-            </div>
-        </section>
+</main>
 
-        <footer class="footer">
-            <div class="footer-inner">
-                <div class="footer-brand">焉墨韵科 <span class="ymy-text">ymytech</span></div>
-                <div class="footer-slogan">金石为开 · 墨韵千年 · 沉淀如琢如磨的撰写体验</div>
-                <hr class="footer-divider">
-                <div class="footer-copy">© 2025 焉墨韵科 ymytech · 金石意象 by cmaz501</div>
-            </div>
-        </footer>
-    </main>
-
-    <script>
-        // 侧边栏折叠
-        const sidebar = document.getElementById('sidebar');
-        const main = document.getElementById('main');
-        const toggle = document.getElementById('toggleBtn');
-        const KEY = 'ymytech-sidebar-collapsed';
-        // 恢复用户偏好
-        if (localStorage.getItem(KEY) === '1') {
-            sidebar.classList.add('collapsed');
-            main.classList.add('expanded');
-        }
-        toggle.addEventListener('click', () => {
+<script>
+    // 侧边栏折叠（记忆用户偏好）
+    (function () {
+        var sidebar = document.getElementById('sidebar');
+        var toggle = document.getElementById('toggleBtn');
+        if (!sidebar || !toggle) return;
+        var KEY = 'ymytech-sidebar-collapsed';
+        try {
+            if (localStorage.getItem(KEY) === '1') sidebar.classList.add('collapsed');
+        } catch (e) { /* 隐私模式下忽略 */ }
+        toggle.addEventListener('click', function () {
             sidebar.classList.toggle('collapsed');
-            main.classList.toggle('expanded');
-            localStorage.setItem(KEY, sidebar.classList.contains('collapsed') ? '1' : '0');
+            try {
+                localStorage.setItem(KEY, sidebar.classList.contains('collapsed') ? '1' : '0');
+            } catch (e) { /* 隐私模式下忽略 */ }
         });
-    </script>
+    })();
+</script>
 </body>
 </html>

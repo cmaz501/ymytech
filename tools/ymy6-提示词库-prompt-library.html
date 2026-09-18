@@ -1,238 +1,129 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI提示词库 - 焉墨韵科 ymytech</title>
 <style>
-:root { --primary:#7c3aed; --primary-light:#8b5cf6; --accent:#10b981; --bg:#f8f9fa; --text:#1f2937; --text-secondary:#6b7280; --border:#e5e7eb; }
-* { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; font-size:15px; }
 
-.navbar { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 48px; }
-.nav-inner { max-width:1500px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:72px; }
-.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--text); }
-.nav-logo-icon { width:44px; height:44px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; }
-.nav-logo-text { font-size:22px; font-weight:700; background:linear-gradient(135deg,var(--primary),var(--primary-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
-.nav-links a { text-decoration:none; color:var(--text-secondary); font-size:16px; font-weight:500; transition:color 0.2s; position:relative; }
-.nav-links a:hover,.nav-links a.active { color:var(--primary); }
-.nav-links a.active::after { content:''; position:absolute; bottom:-6px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px; }
-
-.page-header { max-width:1500px; margin:0 auto; padding:28px 48px 0; text-align:center; }
-.page-header h2 { font-size:28px; font-weight:700; }
-.page-header p { color:var(--text-secondary); font-size:15px; margin-top:8px; }
 
 .main-layout { max-width:1500px; margin:24px auto; padding:0 48px; display:flex; gap:28px; align-items:flex-start; }
+
 /* 左侧目录 */
-.sidebar { width:280px; flex-shrink:0; position:sticky; top:96px; max-height:calc(100vh - 120px); overflow-y:auto; background:#fff; border-radius:16px; border:1px solid var(--border); padding:20px; }
-.sidebar::-webkit-scrollbar { width:5px; }
-.sidebar::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
+.toc-panel { width:280px; flex-shrink:0; position:sticky; top:96px; max-height:calc(100vh - 120px); overflow-y:auto; background:#fff; border-radius:16px; border:1px solid var(--border); padding:20px; }
+
+.toc-panel::-webkit-scrollbar { width:5px; }
+
+.toc-panel::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
+
 .toc-title { font-size:15px; font-weight:700; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+
 .toc-cat { margin-bottom:2px; }
+
 .toc-cat-header { display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:600; transition:background 0.15s; user-select:none; }
+
 .toc-cat-header:hover { background:#f3f4f6; }
+
 .toc-cat-header .arrow { font-size:10px; transition:transform 0.2s; width:14px; text-align:center; }
+
 .toc-cat-header .arrow.open { transform:rotate(90deg); }
+
 .toc-items { overflow:hidden; transition:max-height 0.3s ease; }
+
 .toc-item { display:block; padding:5px 10px 5px 30px; font-size:13px; color:var(--text-secondary); text-decoration:none; border-radius:6px; transition:all 0.15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+
 .toc-item:hover { background:#f3f4f6; color:var(--primary); }
+
 .toc-item.active { background:rgba(124,58,237,0.08); color:var(--primary); font-weight:600; }
+
 
 /* 右侧内容 */
 .content-area { flex:1; min-width:0; }
+
 .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; background:#fff; padding:10px; border-radius:14px; border:1px solid var(--border); }
+
 .tab { padding:8px 18px; border-radius:8px; border:none; background:none; cursor:pointer; font-size:14px; font-weight:500; color:var(--text-secondary); transition:all 0.2s; white-space:nowrap; }
+
 .tab:hover { background:#f3f4f6; }
+
 .tab.active { background:var(--primary); color:#fff; }
 
+
 .search-bar { margin-bottom:20px; }
+
 .search-bar input { width:100%; padding:14px 18px; border:1px solid var(--border); border-radius:12px; font-size:15px; outline:none; transition:border-color 0.2s; }
+
 .search-bar input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(124,58,237,0.1); }
+
 .count-bar { font-size:14px; color:var(--text-secondary); margin-bottom:16px; }
 
+
 .prompt-card { background:#fff; border-radius:16px; padding:28px; margin-bottom:20px; border:1px solid var(--border); transition:box-shadow 0.2s; }
+
 .prompt-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.06); }
+
 .prompt-card h3 { font-size:18px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+
 .prompt-card .desc { color:var(--text-secondary); font-size:14px; margin-bottom:14px; line-height:1.6; }
+
 .prompt-card .prompt-body { background:#f8f9fa; border-radius:10px; padding:18px; font-size:14px; line-height:1.9; white-space:pre-wrap; word-break:break-word; max-height:350px; overflow-y:auto; border:1px solid #e5e7eb; }
+
 .prompt-card .prompt-body.expanded { max-height:none; }
+
 .card-actions { display:flex; gap:10px; margin-top:14px; align-items:center; }
+
 .btn-copy { padding:8px 20px; border-radius:8px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; border:none; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s; }
+
 .btn-copy:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(124,58,237,0.3); }
+
 .btn-copy.copied { background:var(--accent); }
+
 .btn-expand { padding:8px 20px; border-radius:8px; background:none; color:var(--primary); border:1px solid var(--primary); cursor:pointer; font-size:13px; transition:all 0.2s; }
+
 .tag-row { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+
 .tag-item { padding:3px 10px; border-radius:5px; font-size:12px; font-weight:500; background:rgba(124,58,237,0.08); color:var(--primary); }
+
 .empty { text-align:center; padding:80px 20px; color:var(--text-secondary); font-size:16px; }
 
-.footer { background:#1f2937; color:#d1d5db; padding:48px 48px 40px; text-align:center; margin-top:60px; }
-.footer-inner { max-width:1500px; margin:0 auto; }
-.footer-brand { font-size:22px; font-weight:700; color:#fff; margin-bottom:8px; }
-.footer-slogan { color:#9ca3af; font-size:14px; margin-bottom:24px; }
-.footer-divider { border:none; border-top:1px solid #374151; margin:24px 0; }
-.footer-copy { font-size:14px; color:#6b7280; }
 
-@media(max-width:900px){ .main-layout{flex-direction:column} .sidebar{width:100%;position:static;max-height:none} .toc-item{white-space:normal} }
-@media(max-width:768px){ .navbar{padding:0 20px} .nav-links{gap:16px} .nav-links a{font-size:13px} .main-layout{padding:0 20px} .tabs{gap:4px} .tab{padding:6px 12px;font-size:12px} }
+@media(max-width:900px){ .main-layout{flex-direction:column}
+ .toc-panel{width:100%;position:static;max-height:none}
+ .toc-item{white-space:normal}}
 
-    
-/* ========== 主内容区 ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-.sidebar.collapsed ~ .page-main { margin-left: 64px; }
-@media (max-width: 960px) {
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
-}
-    
-/* ========== Left Sidebar ========== */
-.sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 240px;
-    background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
-    color: #e5e7eb;
-    z-index: 1000;
-    transition: width 0.3s ease;
-    display: flex; flex-direction: column;
-    box-shadow: 2px 0 16px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-.sidebar.collapsed { width: 64px; }
-.sidebar-header {
-    height: 72px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-.sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    overflow: hidden; white-space: nowrap;
-    text-decoration: none; color: inherit;
-}
-.sidebar-brand-icon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: linear-gradient(135deg, #d4a14a, #b8862e);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #1f1437;
-    font-size: 20px; font-weight: 800;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-}
-.sidebar-brand-text {
-    font-size: 17px; font-weight: 700;
-    color: #fff;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-    letter-spacing: 1px;
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-.sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
-.sidebar-toggle {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #d1d5db;
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-.sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
-.sidebar-nav {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    list-style: none;
-}
-.sidebar-nav li { margin-bottom: 2px; }
-.sidebar-nav a {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: #cbd5e1;
-    font-size: 14.5px;
-    transition: all 0.2s;
-    position: relative;
-    white-space: nowrap;
-    text-decoration: none;
-}
-.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.sidebar-nav a.active {
-    background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
-    color: #d4a14a;
-}
-.sidebar-nav a.active::before {
-    content: '';
-    position: absolute; left: 0; top: 6px; bottom: 6px;
-    width: 3px;
-    background: #d4a14a;
-    border-radius: 0 3px 3px 0;
-}
-.sidebar-nav .nav-icon {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-}
-.sidebar-nav .nav-label { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
-.sidebar-footer {
-    padding: 14px 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    color: #9ca3af;
-    font-size: 12px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
-
-/* ========== Page Main ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-@media (max-width: 960px) {
-    .sidebar { width: 64px; }
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
-}
-
-
-    </style>
+@media(max-width:768px){ .main-layout{padding:0 20px}
+ .tabs{gap:4px}
+ .tab{padding:6px 12px;font-size:12px}}
+        /* 页头与内容容器（1500px）对齐 */
+        body .page-header { max-width: 1500px; padding: 36px 48px 0; }
+</style>
+<meta name="description" content="汇集专利撰写、审查答复、技术挖掘、权利要求布局等场景的常用提示词，分类浏览、一键复制。">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/ymy.css">
 </head>
 <body>
-<!-- 左侧侧边栏 -->
+<!-- 左侧导航 -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <a href="../index.html" class="sidebar-brand">
             <div class="sidebar-brand-icon">焉</div>
             <span class="sidebar-brand-text">焉墨韵科</span>
         </a>
-        <button class="sidebar-toggle" id="toggleBtn" title="折叠/展开">«</button>
+        <button class="sidebar-toggle" id="toggleBtn" title="折叠 / 展开导航" aria-label="折叠或展开导航栏">&laquo;</button>
     </div>
     <ul class="sidebar-nav">
-        <li><a href="../index.html"><span class="nav-icon">⌂</span><span class="nav-label">首页</span></a></li>
-        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon">W</span><span class="nav-label">同步撰写</span></a></li>
-        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon">N</span><span class="nav-label">自动标号</span></a></li>
-        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon">F</span><span class="nav-label">附图提取</span></a></li>
-        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon">R</span><span class="nav-label">引用检查</span></a></li>
-        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon">C</span><span class="nav-label">标记一致性</span></a></li>
-        <li><a href="ymy6-提示词库-prompt-library.html" class="active"><span class="nav-icon">P</span><span class="nav-label">提示词库</span></a></li>
-        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon">B</span><span class="nav-label">常用书签</span></a></li>
-        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon">S</span><span class="nav-label">书签(简)</span></a></li>
+        <li><a href="../index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">首页</span></a></li>
+        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">同步撰写</span></a></li>
+        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon" aria-hidden="true">⊕</span><span class="nav-label">自动标号</span></a></li>
+        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">附图提取</span></a></li>
+        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">引用检查</span></a></li>
+        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon" aria-hidden="true">◐</span><span class="nav-label">标记一致性</span></a></li>
+        <li><a href="ymy6-提示词库-prompt-library.html" class="active"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">提示词库</span></a></li>
+        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon" aria-hidden="true">★</span><span class="nav-label">常用书签</span></a></li>
+        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">书签（简）</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
@@ -240,16 +131,12 @@ body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:var(--
 </aside>
 
 <main class="page-main">
-
-<main class="page-main">
-
-
-<div class="page-header"><h2>📝 专利 AI 提示词库</h2><p>收集常用 AI 提示词，涵盖撰写、审查答复、技术挖掘等场景，点击即可复制</p></div>
+<div class="page-header"><h2>专利 AI 提示词库</h2><p>收集常用 AI 提示词，涵盖撰写、审查答复、技术挖掘等场景，点击即可复制</p></div>
 
 <div class="main-layout">
-<aside class="sidebar" id="sidebar"><div class="toc-title">📑 目录</div><div id="tocTree"></div></aside>
+<aside class="toc-panel" id="tocPanel"><div class="toc-title">目录</div><div id="tocTree"></div></aside>
 <div class="content-area">
-<div class="search-bar"><input type="text" id="searchInput" placeholder="🔍 搜索提示词..." oninput="filterPrompts()"></div>
+<div class="search-bar"><input type="text" id="searchInput" placeholder="搜索提示词..." oninput="filterPrompts()"></div>
 <div class="tabs" id="tabBar"></div>
 <div class="count-bar" id="countBar"></div>
 <div id="promptList"></div>
@@ -463,7 +350,7 @@ const catOrder=['全部','专利撰写','专利撰写方法论','权利要求','
 
 function renderTOC(){
 const tree=document.getElementById('tocTree');
-const icons={'专利撰写':'✍️','专利撰写方法论':'🧠','权利要求':'📋','说明书撰写':'📄','审查答复':'📨','AI风格设定':'🤖','法律学习排版':'📚','其他':'🔧'};
+const icons={};  // 目录分类不再加装饰图标，与顶部标签保持一致的极简语言
 const cats={};
 prompts.forEach((p,i)=>{if(!cats[p.cat])cats[p.cat]=[];cats[p.cat].push({title:p.title,id:i});});
 tree.innerHTML=catOrder.filter(c=>c!=='全部'&&cats[c]).map(cat=>{
@@ -557,9 +444,6 @@ function escapeHtml(text){return text.replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 renderTabs();filterPrompts();
 </script>
-
-</main>
-
 
 </main>
 

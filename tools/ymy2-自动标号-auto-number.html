@@ -1,135 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自动标号工具 - 焉墨韵科 ymytech</title>
     <style>
-        /* ===== 共享导航样式 ===== */
-        :root {
-            --primary: #7c3aed;
-            --primary-light: #8b5cf6;
-            --primary-dark: #6d28d9;
-            --accent: #10b981;
-            --bg: #f8f9fa;
-            --text: #1f2937;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-        }
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap:14px;
-            text-decoration: none;
-            color: var(--text);
-        }
-        .nav-logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius:12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .nav-logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            list-style: none;
-            align-items: center;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
-            position: relative;
-        }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--primary);
-        }
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* ===== 页面标题 ===== */
-        .page-header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding:32px 40px 0;
-            text-align: center;
-        }
-        .page-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .page-header p {
-            color: var(--text-secondary);
-            font-size:15px;
-            margin-top: 6px;
-        }
-
-        /* ===== 底部 ===== */
-        .footer {
-            background: #1f2937;
-            color: #d1d5db;
-            padding: 36px 40px 28px;
-            text-align: center;
-            margin-top: 48px;
-        }
-        .footer-inner { max-width: 1200px; margin: 0 auto; }
-        .footer-brand { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
-        .footer-slogan { color: #9ca3af; font-size:15px; margin-bottom: 20px; }
-        .footer-divider { border: none; border-top: 1px solid #374151; margin:28px 0; }
-        .footer-copy { font-size:15px; color: #6b7280; }
-
-        @media (max-width: 768px) {
-            .navbar { padding: 0 16px; }
-            .nav-links { gap:20px; }
-            .nav-links a { font-size:15px; }
-            .page-header { padding: 16px 16px 0; }
-        }
 
         /* ===== 工具原有样式 ===== */
         body {
@@ -140,15 +15,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f3f5; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb {
-            border-radius: 4px;
-            background-color: #12b7f5;
-            background-image: -webkit-linear-gradient(45deg, rgba(255,93,143,1) 25%, transparent 25%, transparent 50%, rgba(255,93,143,1) 50%, rgba(255,93,143,1) 75%, transparent 75%, transparent);
-            transition: background-color 0.2s ease;
-        }
-        ::-webkit-scrollbar-thumb:hover { background-color: #409eff; }
 
         .container {
             max-width: 1000px;
@@ -161,17 +27,23 @@
             color: #303133;
         }
 
+
         .tit {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
         }
+
         .tit-main { color: #1f2f3d; font-weight: 500; font-size: 24px; margin-bottom: 8px; }
+
         .tit-slogan { color: #6c757d; font-size:15px; line-height:1.7; font-weight: 400; }
+
         .tit-slogan.en { color: #86909c; font-size:15px; margin-top: 4px; }
 
+
         .tit2 { margin:28px 0 8px; color: #212529; font-weight: 500; font-size: 16px; }
+
 
         textarea {
             width: 100%;
@@ -187,11 +59,16 @@
             transition: all 0.2s ease;
             outline: none;
         }
+
         textarea:focus { border-color: #409eff; box-shadow: 0 0 0 3px rgba(64,158,255,0.1); }
+
         textarea::placeholder { color: #adb5bd; font-size:15px; }
+
         textarea.long { min-height: 180px !important; }
 
+
         .btn-wrap { text-align: center; margin: 25px 0; }
+
         button {
             background-color: #409eff;
             border: 1px solid #409eff;
@@ -208,175 +85,55 @@
             font-size:15px;
             border-radius: 6px;
         }
+
         button:hover { background: #66b1ff; border-color: #66b1ff; transform: translateY(-1px); }
+
         button:active { transform: translateY(0); background: #3399ff; border-color: #3399ff; }
+
 
         @media (max-width: 768px) {
             .container { padding: 20px; max-width: 100%; }
+
             .tit-main { font-size: 20px; }
+
             .tit { margin-bottom: 20px; padding-bottom: 15px; }
+
             button { padding: 10px 24px; font-size:15px; }
+
             textarea { min-height: 80px; padding: 10px 12px; font-size:15px; }
-            textarea.long { min-height: 150px !important; }
-        }
-    
-    
-/* ========== 主内容区 ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-.sidebar.collapsed ~ .page-main { margin-left: 64px; }
-@media (max-width: 960px) {
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
-}
-    
-/* ========== Left Sidebar ========== */
-.sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 240px;
-    background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
-    color: #e5e7eb;
-    z-index: 1000;
-    transition: width 0.3s ease;
-    display: flex; flex-direction: column;
-    box-shadow: 2px 0 16px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-.sidebar.collapsed { width: 64px; }
-.sidebar-header {
-    height: 72px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-.sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    overflow: hidden; white-space: nowrap;
-    text-decoration: none; color: inherit;
-}
-.sidebar-brand-icon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: linear-gradient(135deg, #d4a14a, #b8862e);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #1f1437;
-    font-size: 20px; font-weight: 800;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-}
-.sidebar-brand-text {
-    font-size: 17px; font-weight: 700;
-    color: #fff;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-    letter-spacing: 1px;
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-.sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
-.sidebar-toggle {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #d1d5db;
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-.sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
-.sidebar-nav {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    list-style: none;
-}
-.sidebar-nav li { margin-bottom: 2px; }
-.sidebar-nav a {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: #cbd5e1;
-    font-size: 14.5px;
-    transition: all 0.2s;
-    position: relative;
-    white-space: nowrap;
-    text-decoration: none;
-}
-.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.sidebar-nav a.active {
-    background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
-    color: #d4a14a;
-}
-.sidebar-nav a.active::before {
-    content: '';
-    position: absolute; left: 0; top: 6px; bottom: 6px;
-    width: 3px;
-    background: #d4a14a;
-    border-radius: 0 3px 3px 0;
-}
-.sidebar-nav .nav-icon {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-}
-.sidebar-nav .nav-label { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
-.sidebar-footer {
-    padding: 14px 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    color: #9ca3af;
-    font-size: 12px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
 
-/* ========== Page Main ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-@media (max-width: 960px) {
-    .sidebar { width: 64px; }
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
-}
-
-
-    </style>
+            textarea.long { min-height: 150px !important; }}
+        /* 卡片化容器：补发丝边框，与浅灰页面底形成层次 */
+        .container { border: 1px solid var(--line); }
+        /* 页头与内容容器（1000px）对齐 */
+        body .page-header { max-width: 1000px; padding: 36px 40px 0; }
+</style>
+<meta name="description" content="自动加标号工具 —— 输入原始文本与标号规则，一键批量处理，同时生成说明书格式与权利要求书格式。">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/ymy.css">
 </head>
 <body>
-<!-- 左侧侧边栏 -->
+<!-- 左侧导航 -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <a href="../index.html" class="sidebar-brand">
             <div class="sidebar-brand-icon">焉</div>
             <span class="sidebar-brand-text">焉墨韵科</span>
         </a>
-        <button class="sidebar-toggle" id="toggleBtn" title="折叠/展开">«</button>
+        <button class="sidebar-toggle" id="toggleBtn" title="折叠 / 展开导航" aria-label="折叠或展开导航栏">&laquo;</button>
     </div>
     <ul class="sidebar-nav">
-        <li><a href="../index.html"><span class="nav-icon">⌂</span><span class="nav-label">首页</span></a></li>
-        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon">W</span><span class="nav-label">同步撰写</span></a></li>
-        <li><a href="ymy2-自动标号-auto-number.html" class="active"><span class="nav-icon">N</span><span class="nav-label">自动标号</span></a></li>
-        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon">F</span><span class="nav-label">附图提取</span></a></li>
-        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon">R</span><span class="nav-label">引用检查</span></a></li>
-        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon">C</span><span class="nav-label">标记一致性</span></a></li>
-        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon">P</span><span class="nav-label">提示词库</span></a></li>
-        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon">B</span><span class="nav-label">常用书签</span></a></li>
-        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon">S</span><span class="nav-label">书签(简)</span></a></li>
+        <li><a href="../index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">首页</span></a></li>
+        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">同步撰写</span></a></li>
+        <li><a href="ymy2-自动标号-auto-number.html" class="active"><span class="nav-icon" aria-hidden="true">⊕</span><span class="nav-label">自动标号</span></a></li>
+        <li><a href="ymy3-附图提取-figure-extract.html"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">附图提取</span></a></li>
+        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">引用检查</span></a></li>
+        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon" aria-hidden="true">◐</span><span class="nav-label">标记一致性</span></a></li>
+        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">提示词库</span></a></li>
+        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon" aria-hidden="true">★</span><span class="nav-label">常用书签</span></a></li>
+        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">书签（简）</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
@@ -384,15 +141,9 @@
 </aside>
 
 <main class="page-main">
-
-<main class="page-main">
-
-    <!-- 导航栏 -->
-    
-
-    <!-- 页面标题 -->
+<!-- 页面标题 -->
     <div class="page-header">
-        <h2>🔢 自动加标号工具 KT2</h2>
+        <h2>自动加标号</h2>
         <p>一键批量替换 — 同时生成说明书格式和权利要求书格式</p>
     </div>
 
@@ -468,9 +219,6 @@
             console.timeEnd("执行耗时：");
         };
     </script>
-
-
-</main>
 
 
 </main>

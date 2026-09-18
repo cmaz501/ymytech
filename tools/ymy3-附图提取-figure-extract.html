@@ -1,141 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAD PDF附图标记提取 - 焉墨韵科 ymytech</title>
     <style>
-        /* ===== 共享导航样式 ===== */
-        :root {
-            --primary: #7c3aed;
-            --primary-light: #8b5cf6;
-            --primary-dark: #6d28d9;
-            --accent: #10b981;
-            --bg: #f8f9fa;
-            --text: #1f2937;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-        }
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap:14px;
-            text-decoration: none;
-            color: var(--text);
-        }
-        .nav-logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius:12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .nav-logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            list-style: none;
-            align-items: center;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
-            position: relative;
-        }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--primary);
-        }
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* ===== 页面标题 ===== */
-        .page-header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding:32px 40px 0;
-            text-align: center;
-        }
-        .page-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .page-header p {
-            color: var(--text-secondary);
-            font-size:15px;
-            margin-top: 6px;
-        }
-
-        /* ===== 底部 ===== */
-        .footer {
-            background: #1f2937;
-            color: #d1d5db;
-            padding: 36px 40px 28px;
-            text-align: center;
-            margin-top: 48px;
-        }
-        .footer-inner { max-width: 1200px; margin: 0 auto; }
-        .footer-brand { font-size: 18px; font-weight: 700; color: white; margin-bottom: 6px; }
-        .footer-slogan { color: #9ca3af; font-size:15px; margin-bottom: 20px; }
-        .footer-divider { border: none; border-top: 1px solid #374151; margin:28px 0; }
-        .footer-copy { font-size:15px; color: #6b7280; }
-
-        @media (max-width: 768px) {
-            .navbar { padding: 0 16px; }
-            .nav-links { gap:20px; }
-            .nav-links a { font-size:15px; }
-            .page-header { padding: 16px 16px 0; }
-        }
 
         /* ===== 工具本体样式 ===== */
         body {
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             background: var(--bg);
         }
+
 
         .tool-body {
             display: grid;
@@ -148,12 +24,14 @@
             min-height: 500px;
             box-sizing: border-box;
         }
+
         #left-pane {
             grid-column: 1;
             display: flex;
             flex-direction: column;
             height: 100%;
         }
+
         #right-panes {
             grid-column: 2;
             display: flex;
@@ -161,6 +39,7 @@
             gap: 20px;
             height: 100%;
         }
+
         .viewer-pane {
             border: 1px solid #dee2e6;
             border-radius:12px;
@@ -170,11 +49,13 @@
             box-sizing: border-box;
             background: #fff;
         }
+
         #pdf-container {
             flex-grow: 1;
             min-height: 0;
             overflow: auto;
         }
+
         .number-pane {
             white-space: pre-wrap;
             font-family: "Consolas", "Courier New", monospace;
@@ -182,22 +63,26 @@
             min-height: 0;
             overflow: auto;
         }
+
         .controls {
             margin-bottom: 12px;
             background: #f5f5f5;
             padding: 10px 15px;
             border-radius: 6px;
         }
+
         .slider-container {
             display: flex;
             align-items: center;
             gap:14px;
         }
+
         canvas {
             margin: 10px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             border-radius: 4px;
         }
+
         .process-btn {
             margin: 10px 0;
             padding: 10px 20px;
@@ -211,10 +96,12 @@
             transition: all 0.2s;
             width: 100%;
         }
+
         .process-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(40,167,69,0.3);
         }
+
         input[type="file"] {
             padding: 6px;
             border: 2px dashed #dee2e6;
@@ -222,14 +109,17 @@
             width: 100%;
             cursor: pointer;
         }
+
         input[type="range"] {
             flex-grow: 1;
         }
+
         #scale-value {
             font-weight: 600;
             color: var(--primary);
             min-width: 50px;
         }
+
         textarea.number-pane {
             resize: vertical;
             width: 100%;
@@ -240,10 +130,12 @@
             padding: 10px;
             outline: none;
         }
+
         textarea.number-pane:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
         }
+
 
         @media (max-width: 768px) {
             .tool-body {
@@ -251,166 +143,37 @@
                 height: auto;
                 padding: 0 16px;
             }
-            #left-pane, #right-panes { height: auto; min-height: 400px; }
-        }
-    
-    
-/* ========== 主内容区 ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-.sidebar.collapsed ~ .page-main { margin-left: 64px; }
-@media (max-width: 960px) {
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; }
-}
-    
-/* ========== Left Sidebar ========== */
-.sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: 240px;
-    background: linear-gradient(180deg, #1f1437 0%, #2a1955 100%);
-    color: #e5e7eb;
-    z-index: 1000;
-    transition: width 0.3s ease;
-    display: flex; flex-direction: column;
-    box-shadow: 2px 0 16px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-.sidebar.collapsed { width: 64px; }
-.sidebar-header {
-    height: 72px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-.sidebar-brand {
-    display: flex; align-items: center; gap: 10px;
-    overflow: hidden; white-space: nowrap;
-    text-decoration: none; color: inherit;
-}
-.sidebar-brand-icon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: linear-gradient(135deg, #d4a14a, #b8862e);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #1f1437;
-    font-size: 20px; font-weight: 800;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-}
-.sidebar-brand-text {
-    font-size: 17px; font-weight: 700;
-    color: #fff;
-    font-family: "STKaiti","KaiTi","Microsoft YaHei",serif;
-    letter-spacing: 1px;
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-.sidebar.collapsed .sidebar-brand-text { opacity: 0; pointer-events: none; }
-.sidebar-toggle {
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #d1d5db;
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-.sidebar-toggle:hover { background: rgba(255,255,255,0.16); color: #fff; }
-.sidebar.collapsed .sidebar-toggle { transform: rotate(180deg); }
-.sidebar-nav {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 10px;
-    list-style: none;
-}
-.sidebar-nav li { margin-bottom: 2px; }
-.sidebar-nav a {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    color: #cbd5e1;
-    font-size: 14.5px;
-    transition: all 0.2s;
-    position: relative;
-    white-space: nowrap;
-    text-decoration: none;
-}
-.sidebar-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-.sidebar-nav a.active {
-    background: linear-gradient(135deg, rgba(212,161,74,0.18), rgba(184,134,46,0.18));
-    color: #d4a14a;
-}
-.sidebar-nav a.active::before {
-    content: '';
-    position: absolute; left: 0; top: 6px; bottom: 6px;
-    width: 3px;
-    background: #d4a14a;
-    border-radius: 0 3px 3px 0;
-}
-.sidebar-nav .nav-icon {
-    width: 22px; height: 22px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-}
-.sidebar-nav .nav-label { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .nav-label { opacity: 0; pointer-events: none; }
-.sidebar-footer {
-    padding: 14px 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    color: #9ca3af;
-    font-size: 12px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.sidebar-footer-full { opacity: 1; transition: opacity 0.2s; }
-.sidebar.collapsed .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
 
-/* ========== Page Main ========== */
-.page-main {
-    margin-left: 240px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-}
-@media (max-width: 960px) {
-    .sidebar { width: 64px; }
-    .page-main { margin-left: 64px; }
-    .sidebar .sidebar-brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-footer-full { opacity: 0; pointer-events: none; display: none; }
-}
-
-
-    </style>
+            #left-pane, #right-panes { height: auto; min-height: 400px; }}
+        /* 页头与内容容器（1200px）对齐 */
+        body .page-header { max-width: 1200px; padding: 36px 40px 0; }
+</style>
+<meta name="description" content="上传 CAD 导出的 PDF 图纸，自动提取全部标号数字，去重排序后一键输出为撰写格式。">
+<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/ymy.css">
 </head>
 <body>
-<!-- 左侧侧边栏 -->
+<!-- 左侧导航 -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <a href="../index.html" class="sidebar-brand">
             <div class="sidebar-brand-icon">焉</div>
             <span class="sidebar-brand-text">焉墨韵科</span>
         </a>
-        <button class="sidebar-toggle" id="toggleBtn" title="折叠/展开">«</button>
+        <button class="sidebar-toggle" id="toggleBtn" title="折叠 / 展开导航" aria-label="折叠或展开导航栏">&laquo;</button>
     </div>
     <ul class="sidebar-nav">
-        <li><a href="../index.html"><span class="nav-icon">⌂</span><span class="nav-label">首页</span></a></li>
-        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon">W</span><span class="nav-label">同步撰写</span></a></li>
-        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon">N</span><span class="nav-label">自动标号</span></a></li>
-        <li><a href="ymy3-附图提取-figure-extract.html" class="active"><span class="nav-icon">F</span><span class="nav-label">附图提取</span></a></li>
-        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon">R</span><span class="nav-label">引用检查</span></a></li>
-        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon">C</span><span class="nav-label">标记一致性</span></a></li>
-        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon">P</span><span class="nav-label">提示词库</span></a></li>
-        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon">B</span><span class="nav-label">常用书签</span></a></li>
-        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon">S</span><span class="nav-label">书签(简)</span></a></li>
+        <li><a href="../index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">首页</span></a></li>
+        <li><a href="ymy1-同步撰写-patent-writer.html"><span class="nav-icon" aria-hidden="true">✎</span><span class="nav-label">同步撰写</span></a></li>
+        <li><a href="ymy2-自动标号-auto-number.html"><span class="nav-icon" aria-hidden="true">⊕</span><span class="nav-label">自动标号</span></a></li>
+        <li><a href="ymy3-附图提取-figure-extract.html" class="active"><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">附图提取</span></a></li>
+        <li><a href="ymy4-引用检查-claims-checker.html"><span class="nav-icon" aria-hidden="true">◉</span><span class="nav-label">引用检查</span></a></li>
+        <li><a href="ymy5-标记一致性-figure-checker.html"><span class="nav-icon" aria-hidden="true">◐</span><span class="nav-label">标记一致性</span></a></li>
+        <li><a href="ymy6-提示词库-prompt-library.html"><span class="nav-icon" aria-hidden="true">✦</span><span class="nav-label">提示词库</span></a></li>
+        <li><a href="ymy7-常用书签-bookmarks.html"><span class="nav-icon" aria-hidden="true">★</span><span class="nav-label">常用书签</span></a></li>
+        <li><a href="ymy8-书签-ymytech.html"><span class="nav-icon" aria-hidden="true">◇</span><span class="nav-label">书签（简）</span></a></li>
     </ul>
     <div class="sidebar-footer">
         <span class="sidebar-footer-full">© 2025 焉墨韵科</span>
@@ -418,15 +181,9 @@
 </aside>
 
 <main class="page-main">
-
-<main class="page-main">
-
-    <!-- 导航栏 -->
-    
-
-    <!-- 页面标题 -->
+<!-- 页面标题 -->
     <div class="page-header">
-        <h2>🖼️ CAD PDF 附图标记提取工具 KT3</h2>
+        <h2>CAD PDF 附图标记提取</h2>
         <p>上传 CAD 导出的 PDF 图纸，自动提取所有标号数字，去重排序一键输出</p>
     </div>
 
@@ -435,13 +192,13 @@
         <!-- 左侧 PDF 显示窗口 -->
         <div id="left-pane" class="viewer-pane">
             <button class="process-btn" onclick="processNumbers()">
-                ⚠️ 请务必选择 CAD 直接导出的 PDF<br>
+                请务必选择 CAD 直接导出的 PDF<br>
                 <small style="font-weight:400;">拖动滚动条调整图形大小 | 提取结果请自己认真检查 | CAD 打印 PDF 快捷键 Ctrl+P</small>
             </button>
             <div class="controls">
                 <input type="file" id="pdf-input" accept="application/pdf">
                 <div class="slider-container" style="margin-top:8px;">
-                    <span>🔍</span>
+                    
                     <input type="range" id="zoom-slider" min="0.5" max="2" step="0.1" value="1">
                     <span id="scale-value">100%</span>
                 </div>
@@ -453,13 +210,13 @@
         <div id="right-panes">
             <!-- 原始数字窗口 -->
             <div class="viewer-pane" style="height: calc(50% - 10px);">
-                <h3 style="margin-bottom:10px;">📋 提取的原始数字：</h3>
+                <h3 style="margin-bottom:10px;">提取的原始数字：</h3>
                 <div id="raw-numbers" class="number-pane"></div>
             </div>
 
             <!-- 处理结果窗口 -->
             <div class="viewer-pane" style="height: calc(50% - 10px);">
-                <button class="process-btn" onclick="processNumbers()">🔄 处理数字（去重排序）</button>
+                <button class="process-btn" onclick="processNumbers()">处理数字（去重排序）</button>
                 <label for="font-size-input" style="margin-top:8px;display:block;font-weight:600;">字号：</label>
                 <input type="number" id="font-size-input" value="18" min="10" max="50" step="1" onchange="updateFontSize()" style="width:80px;padding:4px 8px;border-radius:6px;border:1px solid #dee2e6;">
                 <textarea id="processed-numbers" class="number-pane" placeholder="去重排序后的结果…"></textarea>
@@ -572,9 +329,6 @@
             document.getElementById('processed-numbers').style.fontSize = `${fontSize}px`;
         }
     </script>
-
-
-</main>
 
 
 </main>
